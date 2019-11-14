@@ -1,0 +1,8 @@
+<resources>
+	<dimen name="normal_port_hex_view_text_size">12sp</dimen>
+	<dimen name="normal_land_hex_view_text_size">12sp</dimen>
+	<dimen name="large_port_hex_view_text_size">16sp</dimen>
+	<dimen name="large_land_hex_view_text_size">16sp</dimen>
+	<dimen name="xlarge_port_hex_view_text_size">15sp</dimen>
+	<dimen name="xlarge_land_hex_view_text_size">22sp</dimen>
+</resources>

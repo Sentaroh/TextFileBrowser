@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+	xmlns:android="http://schemas.android.com/apk/res/android">
+   	    <ListPreference
+			android:key="settings_tb_index_cache"
+			android:title="@string/settings_tb_index_cache_title"
+			android:dialogTitle="@string/settings_tb_index_cache_dialog_title"
+			android:entries="@array/settings_tb_index_cache_list_entries"
+			android:entryValues="@array/settings_tb_index_cache_list_values"/>
+   	    
+</PreferenceScreen>

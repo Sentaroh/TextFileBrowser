@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
+    <header android:title="@string/settings_main_ui_title"
+        android:fragment="com.sentaroh.android.TextFileBrowser.SettingsActivity$SettingsUi"/>
+    <header android:title="@string/settings_main_cache_title"
+        android:fragment="com.sentaroh.android.TextFileBrowser.SettingsActivity$SettingsCache"/>
+    <header android:title="@string/settings_main_buffer_title"
+        android:fragment="com.sentaroh.android.TextFileBrowser.SettingsActivity$SettingsBuffer"/>
+    <header android:title="@string/settings_main_misc_title"
+        android:fragment="com.sentaroh.android.TextFileBrowser.SettingsActivity$SettingsMisc"/>
+    
+</preference-headers>

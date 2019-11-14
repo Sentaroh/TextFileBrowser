@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ctv="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:ignore="HardcodedText,SpUsage" >
+
+    <TextView
+        android:id="@+id/text_browser_list_item_identifier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:text="xlarge,port,81" />
+    
+    <LinearLayout
+        android:id="@+id/text_browser_list_item_charview"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:background="@color/text_browser_list_item_color_selector">
+        
+        <TextView
+            android:id="@+id/text_browser_list_item_char_line1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:text="12345678" />
+
+        <com.sentaroh.android.TextFileBrowser.CustomTextView
+	       android:id="@+id/text_browser_list_item_char_text1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+           android:layout_marginLeft="10dp"
+           android:layout_marginRight="10dp"
+           ctv:textSize="16dp"
+	       android:text="Test" />
+
+        <com.sentaroh.android.Utilities2.Widget.NonWordwrapTextView
+            android:id="@+id/text_browser_list_item_char_no_word_wrap"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:visibility="gone"
+            android:text="Test" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/text_browser_list_item_hexview"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@color/text_browser_list_item_color_selector">
+
+        <TextView
+            android:id="@+id/text_browser_list_item_hex_addr1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="12345678"
+            android:textSize="@dimen/xlarge_port_hex_view_text_size"
+            android:layout_marginRight="20dp"
+            android:typeface="monospace" />
+        
+       	<TextView
+            android:id="@+id/text_browser_list_item_hex_hex1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00 01 02 03 04 05 06 07"
+            android:textSize="@dimen/xlarge_port_hex_view_text_size"
+            android:typeface="monospace" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:text="  -  "
+            android:textSize="@dimen/xlarge_port_hex_view_text_size" />
+       			
+       	<TextView
+            android:id="@+id/text_browser_list_item_hex_hex2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00 01 02 03 04 05 06 07"
+            android:textSize="@dimen/xlarge_port_hex_view_text_size"
+            android:typeface="monospace" />
+       			
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:text="   *"
+            android:textSize="@dimen/xlarge_port_hex_view_text_size" />
+        
+
+        <TextView
+            android:id="@+id/text_browser_list_item_hex_char1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ABCDEFGH"
+            android:textSize="@dimen/xlarge_port_hex_view_text_size"
+            android:typeface="monospace" />
+        
+        <TextView
+            android:id="@+id/text_browser_list_item_hex_char2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ABCDEFGH"
+            android:textSize="@dimen/xlarge_port_hex_view_text_size"
+            android:typeface="monospace" />
+        		        
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="*"
+            android:textSize="@dimen/xlarge_port_hex_view_text_size" />
+		
+		
+		        
+     </LinearLayout>
+        
+</LinearLayout>

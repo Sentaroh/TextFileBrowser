@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="msgs_tb_encode_dialog_title">Select new text encoding</string>
+</resources>
