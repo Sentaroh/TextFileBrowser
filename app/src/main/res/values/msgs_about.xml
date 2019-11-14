@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="msgs_tb_menu_about">About TextFileBrowser</string>
+    <string name="msgs_text_browser_about_tb">Version %s\n\n
+It is an application that displays text files.\n
+-character string display(No line break, line break at the right edge of the screen, a new line at the right edge of the screen word)\n
+-Hex Decimal display\n
+-Display text as a text file other than the file\n
+-Maximum file size is 1GB. Read the measured value in the Sony Xperia Acro: is 3MB/seconds.\n
+\n
+External Library: juniversalchardet 1.0.3</string>
+	
+</resources>

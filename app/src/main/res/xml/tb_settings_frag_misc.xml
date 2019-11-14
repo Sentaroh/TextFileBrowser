@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+	xmlns:android="http://schemas.android.com/apk/res/android">
+	  	<CheckBoxPreference
+			android:key="settings_tb_debug_enable"
+			android:title="@string/settings_tb_debug_enable_title"
+			android:summary="@string/settings_tb_debug_enable_summary_ena" />
+      	<CheckBoxPreference
+			android:key="settings_tb_exit_cleanly"
+			android:title="@string/settings_tb_exit_cleanly_title"
+			android:summary="@string/settings_tb_exit_cleanly_summary_ena" />
+        <CheckBoxPreference
+            android:key="settings_tb_confirm_exit"
+            android:title="@string/settings_tb_confirm_exit_title"
+            android:summary="@string/settings_tb_confirm_exit_summary_ena" />
+        <CheckBoxPreference
+            android:key="settings_tb_use_no_word_wrap_text_view"
+            android:title="@string/settings_tb_use_no_word_wrap_text_view_title"
+            android:summary="@string/settings_tb_use_no_word_wrap_text_view_summary_ena" />
+
+</PreferenceScreen>

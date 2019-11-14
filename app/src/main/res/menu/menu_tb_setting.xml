@@ -1,0 +1,47 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:appv7="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/menu_tb_mode_swicth"
+          android:title="@string/msgs_tb_menu_mode_switch_hex" 
+          android:icon="@drawable/ic_32_text"
+          appv7:showAsAction="always"/>
+    <item android:id="@+id/menu_tb_open"
+          android:title="@string/msgs_tb_menu_open" 
+          android:icon="@drawable/ic_48_open_file"
+          />
+    <item android:id="@+id/menu_tb_reload"
+          android:title="@string/msgs_tb_menu_reload" 
+          android:icon="@drawable/ic_32_refresh"
+          />
+    <item android:id="@+id/menu_tb_find"
+          android:title="@string/msgs_tb_menu_find" 
+          android:icon="@android:drawable/ic_menu_search"
+          />
+    <item android:id="@+id/menu_tb_about"
+          android:title="@string/msgs_tb_menu_about" 
+          android:icon="@android:drawable/ic_menu_info_details"
+          />
+    <item android:id="@+id/menu_tb_settings"
+          android:title="@string/msgs_tb_menu_settings" 
+          android:icon="@android:drawable/ic_menu_preferences" 
+          />
+
+    <item android:id="@+id/menu_tb_storage_permission"
+        android:title="@string/msgs_tb_menu_storage_permission"
+        />
+
+    <item android:id="@+id/menu_tb_clear_cache"
+        android:title="@string/msgs_tb_menu_clear_cache"
+        />
+    <item android:id="@+id/menu_tb_remove_log_file"
+        android:title="@string/msgs_tb_menu_remove_log_file"
+        />
+
+    <item android:id="@+id/menu_tb_send_log"
+        android:title="@string/msgs_tb_menu_send_log"
+        android:icon="@android:drawable/ic_menu_send"
+        />
+    <item android:id="@+id/menu_tb_exit"
+          android:title="@string/msgs_tb_menu_exit" 
+          android:icon="@drawable/ic_32_close_gray" 
+          appv7:showAsAction="always"/>
+</menu>

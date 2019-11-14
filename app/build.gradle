@@ -1,0 +1,73 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion '29.0.2'
+    defaultConfig {
+        applicationId "com.sentaroh.android.TextFileBrowser"
+        minSdkVersion 23
+        targetSdkVersion 29
+
+        versionCode 121
+        versionName "1.70"
+
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    
+    lintOptions {
+        disable 'MissingTranslation'
+        abortOnError false
+    }
+
+    buildTypes {
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+
+            applicationVariants.all { variant ->
+                if (variant.buildType.name.equals("debug")) {
+                    variant.outputs.all {
+                        def versionName = variant.versionName
+                        def versionNumber = variant.versionCode.toString()
+                        def date = new java.text.SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date())
+                        def mod_name = "${rootProject.name}"
+                        def fileExtension= outputFileName.toString().substring(outputFileName.toString().lastIndexOf(".")+1)
+                        def newName = "${mod_name}_debug.${fileExtension}"
+                        outputFileName = "../../../../../release/"+newName
+                    }
+                }
+            }
+
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+
+            applicationVariants.all { variant ->
+                if (variant.buildType.name.equals("release")) {
+                    variant.outputs.all {
+                        def versionName = variant.versionName
+                        def versionNumber = variant.versionCode.toString()
+                        def date = new java.text.SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date())
+                        def mod_name = "${rootProject.name}"
+                        def fileExtension= outputFileName.toString().substring(outputFileName.toString().lastIndexOf(".")+1)
+                        def newName = "${mod_name}_${versionName}_${versionNumber}_release.apk"
+                        outputFileName = "../../release/"+newName
+                    }
+                }
+            }
+
+        }
+    }
+}
+
+dependencies {
+//    implementation project(':Utilities')
+//    implementation(name:'Utilities-1.0.5', ext:'aar')
+    implementation files('libs/Utilities2-1.0.1.aar')
+    implementation 'androidx.appcompat:appcompat:1.0.2'
+}

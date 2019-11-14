@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+	xmlns:android="http://schemas.android.com/apk/res/android">
+      	<CheckBoxPreference
+			android:key="@string/settings_tb_show_lineno"
+			android:title="@string/settings_tb_show_lineno_title"
+			android:summary="@string/settings_tb_show_lineno_summary_ena" />
+
+        <CheckBoxPreference
+            android:key="@string/settings_tb_show_divider_line"
+            android:title="@string/settings_tb_show_divider_line_title"
+            android:summary="@string/settings_tb_show_divider_line_summary_ena" />
+
+        <ListPreference
+            android:key="settings_tb_default_encode_name"
+            android:title="@string/settings_tb_default_encode_name_title"
+            android:dialogTitle="@string/settings_tb_default_encode_name_dialog_title"
+            android:entries="@array/settings_tb_default_encode_name_list_entries"
+            android:entryValues="@array/settings_tb_default_encode_name_list_values"/>
+
+   	    <ListPreference
+			android:key="@string/settings_tb_line_break"
+			android:title="@string/settings_tb_line_break_title"
+			android:summary="@string/settings_tb_line_break_summary"
+			android:dialogTitle="@string/settings_tb_line_break_dialog_title"
+			android:entries="@array/settings_tb_line_break_list_entries"
+			android:entryValues="@array/settings_tb_line_break_list_values"/>
+   	    
+   	    <ListPreference
+			android:key="@string/settings_tb_tab_stop"
+			android:title="@string/settings_tb_tab_stop_title"
+			android:summary="@string/settings_tb_tab_stop_summary"
+			android:dialogTitle="@string/settings_tb_tab_stop_dialog_title"
+			android:entries="@array/settings_tb_tab_stop_list_entries"
+			android:entryValues="@array/settings_tb_tab_stop_list_values"/>
+
+	    <ListPreference
+			android:key="@string/settings_tb_font_family"
+			android:title="@string/settings_tb_font_family_title"
+			android:summary="@string/settings_tb_font_family_summary"
+			android:dialogTitle="@string/settings_tb_font_family_dialog_title"
+			android:entries="@array/settings_tb_font_family_list_entries"
+			android:entryValues="@array/settings_tb_font_family_list_values"/>
+   	    
+   	    <ListPreference
+			android:key="@string/settings_tb_font_style"
+			android:title="@string/settings_tb_font_style_title"
+			android:summary="@string/settings_tb_font_style_summary"
+			android:dialogTitle="@string/settings_tb_font_style_dialog_title"
+			android:entries="@array/settings_tb_font_style_list_entries"
+			android:entryValues="@array/settings_tb_font_style_list_values"/>
+   	    
+   	    <ListPreference
+			android:key="@string/settings_tb_font_size"
+			android:title="@string/settings_tb_font_size_title"
+			android:summary="@string/settings_tb_font_size_summary"
+			android:dialogTitle="@string/settings_tb_font_size_dialog_title"
+			android:entries="@array/settings_tb_font_size_list_entries"
+			android:entryValues="@array/settings_tb_font_size_list_values"/>
+
+      	<CheckBoxPreference
+			android:key="@string/settings_tb_use_light_theme"
+			android:title="@string/settings_tb_use_light_theme_title"
+			android:summary="@string/settings_tb_use_light_theme_summary_ena" />
+
+        <com.sentaroh.android.Utilities2.Preference.ColorPickerPreference
+            android:key="@string/settings_tb_text_area_background_color"
+            android:title="@string/settings_tb_text_area_background_color_title"/>
+
+        <CheckBoxPreference
+            android:key="@string/settings_tb_show_all_file_as_text"
+            android:title="@string/settings_tb_show_all_file_as_text_title"
+            android:summary="@string/settings_tb_show_all_file_as_text_summary_ena" />
+
+        <com.sentaroh.android.Utilities2.Preference.ListEditPreference
+            android:key="@string/settings_tb_mime_type_to_open_text_mode"
+            android:title="@string/settings_tb_mime_type_to_open_text_mode_title"/>
+
+</PreferenceScreen>
