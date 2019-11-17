@@ -164,11 +164,8 @@ public class IndexedFileReader {
         return mFontStyle;
     }
 
-    public IndexedFileReader(boolean dbg,
-//                             boolean adcd,
-                             Context c, CommonDialog cd,
+    public IndexedFileReader(Context c, CommonDialog cd,
                              ThreadCtrl tc,
-//                             String encoding,
                              String default_encoding, String cache_option,
 			int ib_char_size, int ib_hex_size, int cp_size, MainActivity ma) {
 		cparms.mainActivity=ma;
@@ -477,12 +474,7 @@ public class IndexedFileReader {
 						(int)(tfli.end_pos-tfli.start_pos+1), tfli.no_of_lines);
 			}
 			fis.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			tal=null;
-			cparms.lastErrorMessage=e.getMessage();
-            log.debug("readFileBlock error="+e.getMessage()+"\n"+MiscUtil.getStackTraceString(e));
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			tal=null;
 			cparms.lastErrorMessage=e.getMessage();
@@ -490,7 +482,7 @@ public class IndexedFileReader {
 		} finally {
 			try {
 				if (fis!=null) fis.close();
-			} catch (IOException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -767,23 +759,15 @@ public class IndexedFileReader {
                     debugMsg("loadSavedFileIndex","Other was changed="+cparms.encodeName+", fich="+fich.encode_name);
                     if (cparms.encodeName.equals("")) cparms.encodeName=fich.encode_name;
 			    }
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-				cparms.lastErrorMessage=e.getMessage();
-                log.debug("loadSavedFileIndex error="+e.getMessage()+"\n"+MiscUtil.getStackTraceString(e));
 			} catch (StreamCorruptedException e) {
 				e.printStackTrace();
 				cparms.lastErrorMessage=e.getMessage();
                 log.debug("loadSavedFileIndex error="+e.getMessage()+"\n"+MiscUtil.getStackTraceString(e));
-			} catch (IOException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 				cparms.lastErrorMessage=e.getMessage();
                 log.debug("loadSavedFileIndex error="+e.getMessage()+"\n"+MiscUtil.getStackTraceString(e));
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-				cparms.lastErrorMessage=e.getMessage();
-                log.debug("loadSavedFileIndex error="+e.getMessage()+"\n"+MiscUtil.getStackTraceString(e));
-			} 
+			}
 		} else if (log.isDebugEnabled()) debugMsg("loadSavedFileIndex","saved index can not be found");
 
 		return result;
@@ -846,15 +830,11 @@ public class IndexedFileReader {
                         ", fich.hex_blksize="+fich.hex_blksize+", cparms.hexModeBlockSize="+cparms.hexModeBlockSize+
                         ", fich.tab_stop="+fich.tab_stop+", cparms.tab_stop_value="+cparms.tab_stop_value+
                         ", cparms.encodeName="+cparms.encodeName+", fich.encode_name="+fich.encode_name);
-            } catch (FileNotFoundException e) {
-				e.printStackTrace();
-				cparms.lastErrorMessage=e.getMessage();
-                log.debug("saveFileIndex error="+e.getMessage()+"\n"+MiscUtil.getStackTraceString(e));
 			} catch (StreamCorruptedException e) {
 				e.printStackTrace();
 				cparms.lastErrorMessage=e.getMessage();
                 log.debug("saveFileIndex error="+e.getMessage()+"\n"+MiscUtil.getStackTraceString(e));
-			} catch (IOException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 				cparms.lastErrorMessage=e.getMessage();
                 log.debug("saveFileIndex error="+e.getMessage()+"\n"+MiscUtil.getStackTraceString(e));
@@ -915,12 +895,7 @@ public class IndexedFileReader {
 //                    log.trace("b_idx="+b_idx+", f_idx="+f_idx+", b_remnant="+b_remnant);
 		    	} else break;
 		    }
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			success=false;
-			cparms.lastErrorMessage=e.getMessage();
-            log.debug("createCharModeIndexList error="+e.getMessage()+"\n"+MiscUtil.getStackTraceString(e));
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			success=false;
 			cparms.lastErrorMessage=e.getMessage();
@@ -1013,7 +988,7 @@ public class IndexedFileReader {
                     debugMsg("createHexModeIndexList","created list size="+cparms.hexModeFileIndex.size()+
                             ", total lines="+tot_lines);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             log.debug("createHexModeIndexList error="+e.getMessage()+"\n"+MiscUtil.getStackTraceString(e));
         }

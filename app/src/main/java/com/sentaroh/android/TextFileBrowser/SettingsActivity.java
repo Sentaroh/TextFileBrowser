@@ -432,7 +432,7 @@ public class SettingsActivity extends PreferenceActivity{
             checkSettings(log, shared_pref,getString(R.string.settings_tb_exit_cleanly));
             checkSettings(log, shared_pref,getString(R.string.settings_tb_confirm_exit));
 
-            if (!mGp.debugEnabled) {
+            if (!mGp.isDebuggable(mContext)) {
                 mPrefFrag.findPreference(getString(R.string.settings_tb_use_no_word_wrap_text_view)).setEnabled(false);
             } else {
                 mPrefFrag.findPreference(getString(R.string.settings_tb_use_no_word_wrap_text_view)).setEnabled(true);

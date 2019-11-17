@@ -307,7 +307,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void positiveResponse(Context context, Object[] objects) {
                         if (Build.VERSION.SDK_INT>=29) {
-                            checkScopedStoragePermissions();
+                            checkInternalStoragePermissions();
                         } else {
                             showFileSelectDialog();
                         }
@@ -332,9 +332,7 @@ public class MainActivity extends AppCompatActivity {
 				
 				vfli.file_view_fragment=FileViewerFragment.newInstance(vfli.viewd_file.getPath());
 				vfli.tc_view=new ThreadCtrl();
-		        vfli.ix_reader_view=new IndexedFileReader(mGp.debugEnabled,
-//		        		mGp.settingAlwayDeterminCharCode,
-		        		this,mCommonDlg, 
+		        vfli.ix_reader_view=new IndexedFileReader(this, mCommonDlg,
 		        		vfli.tc_view,
 //		        		mGp.settingEncodeName,
 		        		mGp.settingDefaultEncodeName,
@@ -466,9 +464,7 @@ public class MainActivity extends AppCompatActivity {
 		vfli.viewd_file=in_file;
         mGp.viewedFileList.add(vfli);
 
-        vfli.ix_reader_view=new IndexedFileReader(mGp.debugEnabled,
-//        		mGp.settingAlwayDeterminCharCode,
-        		this,mCommonDlg,
+        vfli.ix_reader_view=new IndexedFileReader(this, mCommonDlg,
         		vfli.tc_view,
 //        		mGp.settingEncodeName,
         		mGp.settingDefaultEncodeName,
@@ -644,7 +640,6 @@ public class MainActivity extends AppCompatActivity {
 	
 	private void confirmCloseFile() {
 		final ViewedFileListItem vfli=getViewedFileListItem(mGp.currentViewedFile);
-//		final FileViewerFragment fvf=(FileViewerFragment) vfli.file_view_fragment;
 		if (vfli.tc_view.isThreadActive()) {
 			NotifyEvent ntfy=new NotifyEvent(mContext);
 			ntfy.setListener(new NotifyEventListener(){
@@ -660,9 +655,7 @@ public class MainActivity extends AppCompatActivity {
 				@Override
 				public void negativeResponse(Context c, Object[] o) {}
 			});
-			mCommonDlg.showCommonDialog(true, "W",
-					getString(R.string.msgs_text_browser_file_reading_cancel_confirm),"",
-					ntfy);
+			mCommonDlg.showCommonDialog(true, "W", getString(R.string.msgs_text_browser_file_reading_cancel_confirm),"", ntfy);
 		} else {
 		    if (vfli.searchEnabled) {
                 vfli.file_view_fragment.switchFindWidget();
@@ -678,7 +671,7 @@ public class MainActivity extends AppCompatActivity {
 	
 	@SuppressLint("NewApi")
 	public void refreshOptionMenu() {
-		if (Build.VERSION.SDK_INT >= 11) invalidateOptionsMenu();
+		invalidateOptionsMenu();
 	};
 
 	@Override
@@ -697,9 +690,11 @@ public class MainActivity extends AppCompatActivity {
 		ViewedFileListItem vf=getViewedFileListItem(mGp.currentViewedFile);
         CommonDialog.setMenuItemEnabled(mActivity, menu, menu.findItem(R.id.menu_tb_open), true);
         CommonDialog.setMenuItemEnabled(mActivity, menu, menu.findItem(R.id.menu_tb_clear_cache), true);
-		if (vf!=null) {
-//			FileViewerFragment fvf=(FileViewerFragment)vf.file_view_fragment;
-//			Log.v("","mode="+vf.browseMode+", t="+vf.tc_view.isThreadActive());
+
+        if (SafManager3.buildStoragePermissionRequiredList(mContext).size()>0) menu.findItem(R.id.menu_tb_storage_permission).setVisible(true);
+        else menu.findItem(R.id.menu_tb_storage_permission).setVisible(false);
+
+        if (vf!=null) {
 	        if (vf.browseMode==FileViewerAdapter.TEXT_BROWSER_BROWSE_MODE_CHAR) {
 	        	menu.findItem(R.id.menu_tb_mode_swicth)
 	        	.setTitle(getString(R.string.msgs_tb_menu_mode_switch_hex))
@@ -762,7 +757,7 @@ public class MainActivity extends AppCompatActivity {
 			invokeSettings();
 			refreshOptionMenu();
 		} else if (item.getItemId()== R.id.menu_tb_open) {
-            checkScopedStoragePermissions();
+            showFileSelectDialog();
 		} else if (item.getItemId()== R.id.menu_tb_reload) {
 			fvf.reloadFile();
 		} else if (item.getItemId()== R.id.menu_tb_mode_swicth) {
@@ -771,13 +766,8 @@ public class MainActivity extends AppCompatActivity {
 		} else if (item.getItemId()== R.id.menu_tb_find) {
 			fvf.switchFindWidget();
 			refreshOptionMenu();
-//		} else if (item.getItemId()== R.id.menu_tb_encode) {
-//			EncodeSelectorFragment esfm=EncodeSelectorFragment.newInstance();
-//			esfm.showDialog(mFragmentManager, esfm, 
-//					getViewedFileListItem(mGp.currentViewedFile));
-//			refreshOptionMenu();
         } else if (item.getItemId()== R.id.menu_tb_storage_permission) {
-            requestStoragePermissions();
+            requestStoragePermissions(REQUEST_CODE_EXTERNAL_STORAGE_ACCESS_PERMISSION);
 		} else if (item.getItemId()== R.id.menu_tb_about) {
 			aboutTextFileBrowser();
 		} else if (item.getItemId()== R.id.menu_tb_exit) {
@@ -794,19 +784,6 @@ public class MainActivity extends AppCompatActivity {
 
 	private void clearCache() {
         IndexedFileReader.removeIndexCache(mContext);
-//	    NotifyEvent ntfy=new NotifyEvent(mContext);
-//	    ntfy.setListener(new NotifyEventListener() {
-//            @Override
-//            public void positiveResponse(Context context, Object[] objects) {
-//                IndexedFileReader.removeIndexCache();
-//                finish();
-//            }
-//
-//            @Override
-//            public void negativeResponse(Context context, Object[] objects) {
-//
-//            }
-//        });
 	    mCommonDlg.showCommonDialog(false, "W", "File index cache file was removed, restart the app.", "",null);
     }
 
@@ -835,9 +812,7 @@ public class MainActivity extends AppCompatActivity {
 			@Override
 			public void positiveResponse(Context c, Object[] o) {
 				ViewedFileListItem vfli=getViewedFileListItem(mGp.currentViewedFile);
-//				mFragmentManager.beginTransaction().remove(vfli.file_view_fragment).commit();
-//				mGp.viewedFileList.remove(vfli);
-				
+
 				for (int i = 0; i< mGp.viewedFileList.size(); i++) {
 					vfli= mGp.viewedFileList.get(i);
 					if (vfli.tc_view.isThreadActive()) {
@@ -925,8 +900,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     lf.delete();
                     MessageDialogFragment mdf =MessageDialogFragment.newInstance(false, "W",
-                            mContext.getString(com.sentaroh.android.Utilities2.R.string.msgs_log_file_list_dlg_send_zip_file_cancelled),
-                            "");
+                            mContext.getString(com.sentaroh.android.Utilities2.R.string.msgs_log_file_list_dlg_send_zip_file_cancelled), "");
                     mdf.showDialog(fm, mdf, null);
                 }
                 pbdf.dismiss();
@@ -948,7 +922,7 @@ public class MainActivity extends AppCompatActivity {
 		    PackageInfo packageInfo = getPackageManager().getPackageInfo(packegeName, PackageManager.GET_META_DATA);
 		    return packageInfo.versionName;
 		} catch (PackageManager.NameNotFoundException e) {
-			return "";
+			return "Unknown";
 		}
 	};
 
@@ -958,31 +932,62 @@ public class MainActivity extends AppCompatActivity {
 		startActivityForResult(intent,0);
 	}
 
-    private void checkScopedStoragePermissions() {
-        NotifyEvent ntfy_storage=new NotifyEvent(mContext);
-        ntfy_storage.setListener(new NotifyEventListener() {
-            @Override
-            public void positiveResponse(Context context, Object[] objects) {
-                showFileSelectDialog();
-            }
-
-            @Override
-            public void negativeResponse(Context context, Object[] objects) {
-                finish();
-            }
-        });
+	private SafManager3.StorageVolumeInfo mPrimaryStorageVolume=null;
+    private void checkInternalStoragePermissions() {
         if (Build.VERSION.SDK_INT>=29) {
             ArrayList<SafStorage3>sl= mGp.safMgr.getSafStorageList();
             if (sl.size()==0) {
-                requestStoragePermissions();
+                ArrayList<SafManager3.StorageVolumeInfo>vol_list=SafManager3.getStorageVolumeInfo(mContext);
+                SafManager3.StorageVolumeInfo primary_svid_temp=null;
+                for(SafManager3.StorageVolumeInfo svi:vol_list) {
+                    if (svi.uuid.equals(SafFile3.SAF_FILE_PRIMARY_UUID)) {
+                        mPrimaryStorageVolume=svi;
+                        break;
+                    }
+                }
+                if (mPrimaryStorageVolume!=null) {
+                    requestInternalStoragePermission();
+                } else {
+                    NotifyEvent ntfy_not_found=new NotifyEvent(mContext);
+                    ntfy_not_found.setListener(new NotifyEventListener() {
+                        @Override
+                        public void positiveResponse(Context context, Object[] objects) {
+                            finish();
+                        }
+                        @Override
+                        public void negativeResponse(Context context, Object[] objects) {}
+                    });
+                    mCommonDlg.showCommonDialog(true, "W",
+                            mContext.getString(R.string.msgs_main_permission_internal_storage_title),
+                            mContext.getString(R.string.msgs_main_permission_internal_storage_not_found_msg), ntfy_not_found);
+                }
             } else {
-                ntfy_storage.notifyToListener(true, null);
+                showFileSelectDialog();
             }
         } else {
-            ntfy_storage.notifyToListener(true, null);
+            showFileSelectDialog();
         }
 
     };
+
+	private void requestInternalStoragePermission() {
+        NotifyEvent ntfy_term=new NotifyEvent(mContext);
+        ntfy_term.setListener(new NotifyEventListener(){
+            @Override
+            public void positiveResponse(Context c, Object[] o) {
+                Intent intent=mPrimaryStorageVolume.volume.createOpenDocumentTreeIntent();
+                startActivityForResult(intent, REQUEST_CODE_PRIMARY_STORAGE_ACCESS_REQUEST);
+            }
+            @Override
+            public void negativeResponse(Context c, Object[] o) {
+                showInternalStoragePermissionDenyMessage();
+            }
+        });
+        mCommonDlg.showCommonDialog(true, "W",
+                mContext.getString(R.string.msgs_main_permission_internal_storage_title),
+                mContext.getString(R.string.msgs_main_permission_internal_storage_request_msg), ntfy_term);
+
+    }
 
     private final int REQUEST_PERMISSIONS_WRITE_EXTERNAL_STORAGE=1;
     @SuppressLint("NewApi")
@@ -1000,23 +1005,12 @@ public class MainActivity extends AppCompatActivity {
                     }
                     @Override
                     public void negativeResponse(Context c, Object[] o) {
-                        NotifyEvent ntfy_term=new NotifyEvent(mContext);
-                        ntfy_term.setListener(new NotifyEventListener(){
-                            @Override
-                            public void positiveResponse(Context c, Object[] o) {
-                                finish();
-                            }
-                            @Override
-                            public void negativeResponse(Context c, Object[] o) {}
-                        });
-                        mCommonDlg.showCommonDialog(false, "W",
-                                mContext.getString(R.string.msgs_main_permission_external_storage_title),
-                                mContext.getString(R.string.msgs_main_permission_external_storage_denied_msg), ntfy_term);
+                        showInternalStoragePermissionDenyMessage();
                     }
                 });
                 mCommonDlg.showCommonDialog(false, "W",
-                        mContext.getString(R.string.msgs_main_permission_external_storage_title),
-                        mContext.getString(R.string.msgs_main_permission_external_storage_request_msg), ntfy);
+                        mContext.getString(R.string.msgs_main_permission_internal_storage_title),
+                        mContext.getString(R.string.msgs_main_permission_internal_storage_request_msg), ntfy);
             } else {
                 return true;
             }
@@ -1044,54 +1038,69 @@ public class MainActivity extends AppCompatActivity {
                 }
                 mNotifyStorageAccessPermitted=null;
             } else {
-                NotifyEvent ntfy_term = new NotifyEvent(mContext);
-                ntfy_term.setListener(new NotifyEventListener() {
-                    @Override
-                    public void positiveResponse(Context c, Object[] o) {
-//                        isTaskTermination = true;
-                        finish();
-                    }
-
-                    @Override
-                    public void negativeResponse(Context c, Object[] o) {
-                    }
-                });
-                mCommonDlg.showCommonDialog(false, "W",
-                        mContext.getString(R.string.msgs_main_permission_external_storage_title),
-                        mContext.getString(R.string.msgs_main_permission_external_storage_denied_msg), ntfy_term);
+                showInternalStoragePermissionDenyMessage();
             }
         }
     }
 
-    private final static int REQUEST_CODE_STORAGE_ACCESS=40;
+    private final static int REQUEST_CODE_PRIMARY_STORAGE_ACCESS_REQUEST =40;
+    private final static int REQUEST_CODE_EXTERNAL_STORAGE_ACCESS_PERMISSION =41;
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		log.debug("Return from settings");
 		if (requestCode==0) applySettingParms();
-        else if (requestCode == REQUEST_CODE_STORAGE_ACCESS) {
+        else if (requestCode == REQUEST_CODE_PRIMARY_STORAGE_ACCESS_REQUEST || requestCode == REQUEST_CODE_EXTERNAL_STORAGE_ACCESS_PERMISSION) {
             if (resultCode == Activity.RESULT_OK) {
                 log.debug("Storage picker action="+data.getAction()+", path="+data.getData().getPath());
                 if (mGp.safMgr.isRootTreeUri(data.getData())) {
                     mGp.safMgr.addUuid(data.getData());
-                    mGp.safMgr.buildSafFileList();
-                    showFileSelectDialog();
+                    mGp.safMgr.refreshSafList();
+                    if (requestCode == REQUEST_CODE_PRIMARY_STORAGE_ACCESS_REQUEST) showFileSelectDialog();
                 } else {
                     NotifyEvent ntfy=new NotifyEvent(mContext);
                     ntfy.setListener(new NotifyEvent.NotifyEventListener() {
                         @Override
                         public void positiveResponse(Context context, Object[] objects) {
-                            requestStoragePermissions();
+                            if (requestCode == REQUEST_CODE_PRIMARY_STORAGE_ACCESS_REQUEST) {
+                                requestInternalStoragePermission();
+                            } else {
+                                requestStoragePermissions(requestCode);
+                            }
                         }
                         @Override
-                        public void negativeResponse(Context context, Object[] objects) {}
+                        public void negativeResponse(Context context, Object[] objects) {
+                            showInternalStoragePermissionDenyMessage();
+                        }
                     });
-                    mCommonDlg.showCommonDialog(true, "W", "ルートディレクトリーが選択されていません、選択しなおしますか?", data.getData().getPath(), ntfy);
+                    if (requestCode == REQUEST_CODE_PRIMARY_STORAGE_ACCESS_REQUEST) {
+                        mCommonDlg.showCommonDialog(true, "W", mContext.getString(R.string.msgs_main_permission_internal_storage_reselect_msg),
+                                data.getData().getPath(), ntfy);
+                    } else {
+                        mCommonDlg.showCommonDialog(true, "W", mContext.getString(R.string.msgs_main_permission_external_storage_reselect_msg),
+                                data.getData().getPath(), ntfy);
+                    }
+                }
+            } else {
+                if (requestCode == REQUEST_CODE_PRIMARY_STORAGE_ACCESS_REQUEST) {
+                    showInternalStoragePermissionDenyMessage();
                 }
             }
-        } else if (requestCode == 0) {
-            applySettingParms();
         }
+    }
 
-    };
+    private void showInternalStoragePermissionDenyMessage() {
+        NotifyEvent ntfy_deny_internal=new NotifyEvent(mContext);
+        ntfy_deny_internal.setListener(new NotifyEventListener() {
+            @Override
+            public void positiveResponse(Context context, Object[] objects) {
+                finish();
+            }
+            @Override
+            public void negativeResponse(Context context, Object[] objects) {}
+        });
+        mCommonDlg.showCommonDialog(false, "W",
+                mContext.getString(R.string.msgs_main_permission_internal_storage_title),
+                mContext.getString(R.string.msgs_main_permission_internal_storage_denied_msg), ntfy_deny_internal);
+    }
 
 	private void applySettingParms() {
 		int lb= mGp.settingLineBreak;
@@ -1253,7 +1262,10 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private void requestStoragePermissions() {
+    private void requestInternalStoragePermissions(int req_code) {
+
+    }
+    private void requestStoragePermissions(int req_code) {
         NotifyEvent ntfy_request=new NotifyEvent(mContext);
         ntfy_request.setListener(new NotifyEventListener() {
             @Override
@@ -1268,19 +1280,19 @@ public class MainActivity extends AppCompatActivity {
                             if (Build.VERSION.SDK_INT>=24) {
                                 if (mGp.safMgr.isScopedStorageMode()) {
                                     intent=svi.volume.createOpenDocumentTreeIntent();
-                                    startActivityForResult(intent, REQUEST_CODE_STORAGE_ACCESS);
+                                    startActivityForResult(intent, req_code);
                                     break;
                                 } else {
                                     if (!svi.uuid.equals(SafManager3.SAF_FILE_PRIMARY_UUID)) {
                                         intent=svi.volume.createAccessIntent(null);
-                                        startActivityForResult(intent, REQUEST_CODE_STORAGE_ACCESS);
+                                        startActivityForResult(intent, req_code);
                                         break;
                                     }
                                 }
                             } else {
                                 if (!svi.uuid.equals(SafManager3.SAF_FILE_PRIMARY_UUID)) {
                                     intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-                                    startActivityForResult(intent, REQUEST_CODE_STORAGE_ACCESS);
+                                    startActivityForResult(intent, req_code);
                                     break;
                                 }
                             }

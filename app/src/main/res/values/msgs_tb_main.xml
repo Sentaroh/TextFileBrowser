@@ -67,8 +67,14 @@
 	<string name="msgs_text_browser_theme_changed_msg">Screen theme has been changed, but it does not take effect unless you restart the application.</string>
 
 
+    <string name="msgs_main_permission_internal_storage_title">Internal storage permission</string>
+    <string name="msgs_main_permission_internal_storage_request_msg">Please give permission to access internal storage in order to read internal storage file and read and write management data.</string>
+    <string name="msgs_main_permission_internal_storage_denied_msg">Since permission to access internal storage is not given, file reading and management data can not be read or written, the application is terminated.</string>
+    <string name="msgs_main_permission_internal_storage_not_found_msg">The storage volume for internal storage cannot be found.</string>
+    <string name="msgs_main_permission_internal_storage_reselect_msg">The root directory is not selected, do you want to reselect it?</string>
+
     <string name="msgs_main_permission_external_storage_title">Internal storage permission</string>
     <string name="msgs_main_permission_external_storage_request_msg">Please give permission to access internal storage in order to read internal storage file and read and write management data.</string>
     <string name="msgs_main_permission_external_storage_denied_msg">Since permission to access internal storage is not given, file reading and management data can not be read or written, the application is terminated.</string>
-
+    <string name="msgs_main_permission_external_storage_reselect_msg">The root directory is not selected, do you want to reselect it?</string>
 </resources>

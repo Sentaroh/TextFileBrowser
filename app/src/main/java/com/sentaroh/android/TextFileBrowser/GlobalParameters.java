@@ -26,6 +26,8 @@ OTHER DEALINGS IN THE SOFTWARE.
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
 
 import com.sentaroh.android.Utilities2.SafFile3;
@@ -52,7 +54,7 @@ public class GlobalParameters {
 
     public LogWriter logWriter = null;
 
-    public ArrayList<ViewedFileListItem> viewedFileList = null;
+    public ArrayList<ViewedFileListItem> viewedFileList = new ArrayList<ViewedFileListItem>();
     public SafFile3 currentViewedFile = null;
 
     public NotificationCommonParms commonNotification = new NotificationCommonParms();
@@ -211,6 +213,21 @@ public class GlobalParameters {
 //                ", use light theme="+ settingUseLightTheme);
 
     }
+
+    public boolean isDebuggable(Context c) {
+        boolean result=false;
+        PackageManager manager = c.getPackageManager();
+        ApplicationInfo appInfo = null;
+        try {
+            appInfo = manager.getApplicationInfo(c.getPackageName(), 0);
+        } catch (Exception e) {
+            result=false;
+        }
+        if ((appInfo.flags & ApplicationInfo.FLAG_DEBUGGABLE) == ApplicationInfo.FLAG_DEBUGGABLE)
+            result=true;
+//        Log.v("","debuggable="+result);
+        return result;
+    };
 
     public void createCrashReport(String info) {
         if (logWriter==null) return;

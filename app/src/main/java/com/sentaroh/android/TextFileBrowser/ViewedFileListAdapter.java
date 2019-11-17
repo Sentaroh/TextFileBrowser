@@ -80,7 +80,7 @@ public class ViewedFileListAdapter extends ArrayAdapter<ViewedFileListItem>{
             view = (TextView)convertView;
         }
 //        view=(TextView)super.getView(position,convertView,parent);
-
+        mSelectedPosition=position;
         view.setText(getItem(position).viewd_file.getName());
         view.setCompoundDrawablePadding(10);
         view.setCompoundDrawablesWithIntrinsicBounds(
@@ -94,15 +94,20 @@ public class ViewedFileListAdapter extends ArrayAdapter<ViewedFileListItem>{
         return view;
 	}
 
-	@Override
-	public View getDropDownView(int position, View convertView, ViewGroup parent) {
-	    return getDropDownOld(position, convertView, parent);
-	}
+	private int mSelectedPosition=0;
+    @Override
+    public View getDropDownView(int position, View convertView, ViewGroup parent) {
+        if(convertView == null) {
+            LayoutInflater inflater = LayoutInflater.from(mActivity);
+            convertView = inflater.inflate(R.layout.spinner_dropdown_single_choice, null);
+        }
+        String text = getItem(position).viewd_file.getPath();
+        final NonWordwrapCheckedTextView text_view=(NonWordwrapCheckedTextView)convertView.findViewById(R.id.text1);
+//        text_view.setWordWrapByFilter(false);
+        text_view.setText(text);
+        if (position==mSelectedPosition) text_view.setChecked(true);
+        else text_view.setChecked(false);
 
-    private View getDropDownOld(int position, View convertView, ViewGroup parent) {
-        final NonWordwrapCheckedTextView text_view=(NonWordwrapCheckedTextView)super.getDropDownView(position, convertView, parent);
-        text_view.setWordWrapByFilter(true);
-        text_view.setText(getItem(position).viewd_file.getPath());
         text_view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -110,7 +115,7 @@ public class ViewedFileListAdapter extends ArrayAdapter<ViewedFileListItem>{
                 setMultilineEllipsizeOld(text_view, 3, TextUtils.TruncateAt.START);
             }
         });
-        return text_view;
+        return convertView;
     }
 
     public static void setMultilineEllipsizeOld(TextView view, int maxLines, TextUtils.TruncateAt where) {
@@ -126,65 +131,6 @@ public class ViewedFileListAdapter extends ArrayAdapter<ViewedFileListItem>{
         view.setText(ellipsizedText);
     }
 
+
 }
 
-//class FragmentViewerHolder implements Externalizable{
-//	private static final long serialVersionUID = 1L;
-//	public String uri_file_info="";
-//	public String file_name="";
-//	
-//	public int[] listViewPos=new int[]{-1,-1};
-//	public int copyFrom=-1, copyTo=0;
-//	public int horizontalPos=0;
-//	public int findResultPos=-1;
-//	public boolean findPosIsValid=false;
-//	public boolean searchEnabled=false;
-//	public String searchString="";
-//	public boolean searchCaseSensitive=false;
-//
-//	public int lineBreak=-1;
-//	public int browseMode=-1;
-//	public boolean showLineNo=true;
-//	
-//	FragmentViewerHolder() {};
-//	
-//	@Override
-//	public void readExternal(ObjectInput in) throws IOException,
-//			ClassNotFoundException {
-//		uri_file_info=in.readUTF();
-//		file_name=in.readUTF();
-//		listViewPos[0]=in.readInt();
-//		listViewPos[1]=in.readInt();
-//		copyFrom=in.readInt();
-//		copyTo=in.readInt();
-//		horizontalPos=in.readInt();
-//		findResultPos=in.readInt();
-//		findPosIsValid=in.readBoolean();
-//		searchEnabled=in.readBoolean();
-//		searchString=in.readUTF();
-//		searchCaseSensitive=in.readBoolean();
-//
-//		lineBreak=in.readInt();
-//		browseMode=in.readInt();
-//		showLineNo=in.readBoolean();
-//	}
-//	@Override
-//	public void writeExternal(ObjectOutput out) throws IOException {
-//		out.writeUTF(uri_file_info);
-//		out.writeUTF(file_name);
-//		out.writeInt(listViewPos[0]);
-//		out.writeInt(listViewPos[1]);
-//		out.writeInt(copyFrom);
-//		out.writeInt(copyTo);
-//		out.writeInt(horizontalPos);
-//		out.writeInt(findResultPos);
-//		out.writeBoolean(findPosIsValid);
-//		out.writeBoolean(searchEnabled);
-//		out.writeUTF(searchString);
-//		out.writeBoolean(searchCaseSensitive);
-//
-//		out.writeInt(lineBreak);
-//		out.writeInt(browseMode);
-//		out.writeBoolean(showLineNo);
-//	}
-//};

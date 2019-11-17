@@ -230,11 +230,11 @@ public class FileViewerFragment extends Fragment {
             }
         }
 
-        try {
-            InputStream is=mMainUriFile.getInputStream();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            InputStream is=mMainUriFile.getInputStream();
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
 
         initViewWidget();
 	};
@@ -588,9 +588,7 @@ public class FileViewerFragment extends Fragment {
                         getString(R.string.msgs_text_browser_file_file_size_too_big)});
             }
             result=true;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return result;

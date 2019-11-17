@@ -63,9 +63,14 @@
 	
 	<string name="msgs_text_browser_theme_changed_msg">スクリーンテーマが変更されましたが、アプリケーションを再起動しなければ反映されません。</string>
 
-    <string name="msgs_main_permission_external_storage_title">内部ストレージ許可</string>
-    <string name="msgs_main_permission_external_storage_request_msg">内部ストレージのファイルの読み込みと管理用データの読み書きを行うために、内部ストレージにアクセスする許可を与えてください。</string>
-    <string name="msgs_main_permission_external_storage_denied_msg">内部ストレージにアクセスする許可が与えられていないためファイルの読み込みと管理データの読み書きができません、アプリケーションを終了します。</string>
+    <string name="msgs_main_permission_internal_storage_title">内部ストレージ許可</string>
+    <string name="msgs_main_permission_internal_storage_request_msg">内部ストレージのファイルの読み込みと管理用データの読み書きを行うために、内部ストレージにアクセスする許可を与えてください。</string>
+    <string name="msgs_main_permission_internal_storage_denied_msg">内部ストレージにアクセスする許可が与えられていないためファイルの読み込みと管理データの読み書きができません、アプリケーションを終了します。</string>
+    <string name="msgs_main_permission_internal_storage_not_found_msg">内部ストレージのストレージボリュウームが見つかりません。</string>
+    <string name="msgs_main_permission_internal_storage_reselect_msg">"ルートディレクトリーが選択されていません、選択しなおしますか?"</string>
 
-					
+    <string name="msgs_main_permission_external_storage_title">外部ストレージ許可</string>
+    <string name="msgs_main_permission_external_storage_request_msg">外部ストレージのファイルの読み込みを行うために、外部ストレージにアクセスする許可を与えてください。</string>
+    <string name="msgs_main_permission_external_storage_denied_msg">外部ストレージにアクセスする許可が与えられていないためファイルの読み込みができません。</string>
+    <string name="msgs_main_permission_external_storage_reselect_msg">"ルートディレクトリーが選択されていません、選択しなおしますか?"</string>
 </resources>

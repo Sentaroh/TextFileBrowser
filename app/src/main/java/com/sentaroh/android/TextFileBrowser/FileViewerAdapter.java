@@ -382,6 +382,7 @@ class FileViewerAdapter extends BaseAdapter{
 	            holder.cv_text.setLineBreak(view_line_break);
 
                 holder.tv_nowrap=(NonWordwrapTextView) v.findViewById(R.id.text_browser_list_item_char_no_word_wrap);
+//                holder.tv_nowrap.setDebugEnable(true);
                 holder.tv_nowrap.setTypeface(view_type_face);
                 holder.tv_nowrap.setTextSize(TypedValue.COMPLEX_UNIT_DIP,view_font_size);//view_font_size);
                 if (view_line_break==CustomTextView.LINE_BREAK_NO_WORD_WRAP) holder.tv_nowrap.setWordWrapEnabled(false);
@@ -398,6 +399,7 @@ class FileViewerAdapter extends BaseAdapter{
                 holder.cv_text.setLineBreak(view_line_break);
 
                 holder.tv_nowrap=(NonWordwrapTextView) v.findViewById(R.id.text_browser_list_item_char_no_word_wrap);
+//                holder.tv_nowrap.setDebugEnable(true);
                 holder.tv_nowrap.setTypeface(view_type_face);
                 holder.tv_nowrap.setTextSize(TypedValue.COMPLEX_UNIT_DIP,view_font_size);//view_font_size);
                 if (view_line_break==CustomTextView.LINE_BREAK_NO_WORD_WRAP) holder.tv_nowrap.setWordWrapEnabled(false);
