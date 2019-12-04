@@ -847,8 +847,28 @@ public class FileViewerFragment extends Fragment {
 					}
 			  	});
 			};
-			
-			if (mViewedFile.lineBreak==CustomTextView.LINE_BREAK_NOTHING) {
+
+            if (mTextListView.getDivider()!=null) {
+                mCcMenu.addMenuItem(getString(R.string.msgs_text_browser_cc_hide_line_divider))
+                        .setOnClickListener(new CustomContextMenuOnClickListener() {
+                            @Override
+                            public void onClick(CharSequence menuTitle) {
+                                mTextListView.setDivider(null);
+                                mTextListAdapter.notifyDataSetChanged();
+                            }
+                        });
+            } else {
+                mCcMenu.addMenuItem(getString(R.string.msgs_text_browser_cc_show_line_divider))
+                        .setOnClickListener(new CustomContextMenuOnClickListener() {
+                            @Override
+                            public void onClick(CharSequence menuTitle) {
+                                mTextListView.setDivider(mDefaultDviderLine);
+                                mTextListAdapter.notifyDataSetChanged();
+                            }
+                        });
+            };
+
+            if (mViewedFile.lineBreak==CustomTextView.LINE_BREAK_NOTHING) {
 				//current=no line break
 				mCcMenu.addMenuItem(getString(R.string.msgs_text_browser_cc_line_break_no_word))
 			  	.setOnClickListener(new CustomContextMenuOnClickListener() {

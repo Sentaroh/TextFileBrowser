@@ -691,7 +691,7 @@ public class IndexedFileReader {
 	};
 
 	static private String getCacheDirectory(Context c) {
-        String dir=c.getExternalCacheDir().getPath()+"/index_cache/";
+        String dir=c.getExternalFilesDir(null).getPath()+"/index_cache/";
         return dir;
     }
 

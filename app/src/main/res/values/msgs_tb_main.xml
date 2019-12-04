@@ -37,6 +37,9 @@
 	<string name="msgs_text_browser_cc_switch_char">Switch to Character view</string>
 	<string name="msgs_text_browser_cc_show_line_no">Show line number</string>
 	<string name="msgs_text_browser_cc_hide_line_no">Hide line number</string>
+    <string name="msgs_text_browser_cc_show_line_divider">Show line divider</string>
+    <string name="msgs_text_browser_cc_hide_line_divider">Hide line divider</string>
+
 	<string name="msgs_text_browser_cc_line_break_nothing">Do not break</string>
 	<string name="msgs_text_browser_cc_line_break_no_word">Line breaks unconditionally</string>
 	<string name="msgs_text_browser_cc_line_break_word">Line breaks delimited word</string>

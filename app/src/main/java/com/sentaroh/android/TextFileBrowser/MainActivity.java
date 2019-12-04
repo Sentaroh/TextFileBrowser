@@ -247,7 +247,9 @@ public class MainActivity extends AppCompatActivity {
         mCommonDlg=new CommonDialog(mActivity, mFragmentManager);
 
         initViewWidget();
-        
+
+        cleanupCacheFile();
+
 //        SortedMap<String, Charset> ac=Charset.availableCharsets();
 //        Set<String> ks=ac.keySet();
 //        Object[] ka=ks.toArray();
@@ -584,6 +586,7 @@ public class MainActivity extends AppCompatActivity {
 	    	NotificationUtil.clearNotification(mContext, mGp.commonNotification);
 //			deleteTaskData();
             mGp.logClose();
+            cleanupCacheFile();
 			if (mGp.settingExitCleanly) {
 				Handler hndl=new Handler();
 				hndl.postDelayed(new Runnable(){
@@ -1343,4 +1346,34 @@ public class MainActivity extends AppCompatActivity {
         });
 
 	};
+
+    private void cleanupCacheFile() {
+        File[] fl=mContext.getExternalCacheDirs();
+        if (fl!=null && fl.length>0) {
+            for(File cf:fl) {
+                File[] child_list=cf.listFiles();
+                for(File ch_item:child_list) if (!deleteCacheFile(ch_item)) break;
+            }
+        } else {
+            fl=mContext.getExternalCacheDirs();
+        }
+    }
+
+    private boolean deleteCacheFile(File del_item) {
+        boolean result=true;
+        if (del_item.isDirectory()) {
+            File[] child_list=del_item.listFiles();
+            for(File child_item:child_list) {
+                if (!deleteCacheFile(child_item)) {
+                    result=false;
+                    break;
+                }
+            }
+            if (result) result=del_item.delete();
+        } else {
+            result=del_item.delete();
+        }
+        return result;
+    }
+
 }

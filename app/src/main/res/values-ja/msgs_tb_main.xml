@@ -36,6 +36,8 @@
 	<string name="msgs_text_browser_cc_switch_char">文字列表示に切替</string>
 	<string name="msgs_text_browser_cc_show_line_no">行番号を表示</string>
 	<string name="msgs_text_browser_cc_hide_line_no">行番号を隠す</string>
+    <string name="msgs_text_browser_cc_show_line_divider">行区切り線を表示</string>
+    <string name="msgs_text_browser_cc_hide_line_divider">行区切り線を隠す</string>
 	<string name="msgs_text_browser_cc_line_break_nothing">改行しない</string>
 	<string name="msgs_text_browser_cc_line_break_no_word">無条件で改行</string>
 	<string name="msgs_text_browser_cc_line_break_word">ワード区切りで改行</string>
