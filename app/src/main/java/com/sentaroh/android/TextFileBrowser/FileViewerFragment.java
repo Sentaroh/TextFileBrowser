@@ -236,7 +236,7 @@ public class FileViewerFragment extends Fragment {
 //            e.printStackTrace();
 //        }
 
-        initViewWidget();
+        if (mMainUriFile!=null) initViewWidget();
 	};
 
     // Default uncaught exception handler variable

@@ -1261,7 +1261,7 @@ public class MainActivity extends AppCompatActivity {
             mFileSelectorDialogFragment=
                     CommonFileSelector2.newInstance(scoped_storage_mode,
                             enableCreate, false, DIALOG_SELECT_CATEGORY_FILE, true, true, lurl, ldir, filename, title);
-            mFileSelectorDialogFragment.showDialog(true, getSupportFragmentManager(), mFileSelectorDialogFragment, ntfy);
+            mFileSelectorDialogFragment.showDialog(mGp.debugEnabled, getSupportFragmentManager(), mFileSelectorDialogFragment, ntfy);
         }
     };
 
