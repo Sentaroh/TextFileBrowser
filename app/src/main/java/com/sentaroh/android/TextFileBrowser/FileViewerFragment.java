@@ -2,7 +2,7 @@ package com.sentaroh.android.TextFileBrowser;
 
 /*
 The MIT License (MIT)
-Copyright (c) 2011-2013 Sentaroh
+Copyright (c) 2011-2019 Sentaroh
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of 
 this software and associated documentation files (the "Software"), to deal 
@@ -28,15 +28,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.sentaroh.android.Utilities2.Dialog.CommonDialog;
-import com.sentaroh.android.Utilities2.Dialog.MessageDialogFragment;
-import com.sentaroh.android.Utilities2.NotifyEvent;
-import com.sentaroh.android.Utilities2.NotifyEvent.NotifyEventListener;
-import com.sentaroh.android.Utilities2.SafFile3;
-import com.sentaroh.android.Utilities2.StringUtil;
-import com.sentaroh.android.Utilities2.ThreadCtrl;
-import com.sentaroh.android.Utilities2.ContextMenu.CustomContextMenu;
-import com.sentaroh.android.Utilities2.ContextMenu.CustomContextMenuItem.CustomContextMenuOnClickListener;
+import com.sentaroh.android.Utilities3.Dialog.CommonDialog;
+import com.sentaroh.android.Utilities3.Dialog.MessageDialogFragment;
+import com.sentaroh.android.Utilities3.NotifyEvent;
+import com.sentaroh.android.Utilities3.NotifyEvent.NotifyEventListener;
+import com.sentaroh.android.Utilities3.SafFile3;
+import com.sentaroh.android.Utilities3.StringUtil;
+import com.sentaroh.android.Utilities3.ThreadCtrl;
+import com.sentaroh.android.Utilities3.ContextMenu.CustomContextMenu;
+import com.sentaroh.android.Utilities3.ContextMenu.CustomContextMenuItem.CustomContextMenuOnClickListener;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

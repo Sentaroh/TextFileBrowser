@@ -2,7 +2,7 @@ package com.sentaroh.android.TextFileBrowser;
 
 /*
 The MIT License (MIT)
-Copyright (c) 2011-2013 Sentaroh
+Copyright (c) 2011-2019 Sentaroh
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of 
 this software and associated documentation files (the "Software"), to deal 
@@ -50,25 +50,25 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.sentaroh.android.Utilities2.AppUncaughtExceptionHandler;
-import com.sentaroh.android.Utilities2.Dialog.CommonDialog;
-import com.sentaroh.android.Utilities2.Dialog.CommonFileSelector2;
-import com.sentaroh.android.Utilities2.Dialog.MessageDialogFragment;
-import com.sentaroh.android.Utilities2.Dialog.ProgressBarDialogFragment;
-import com.sentaroh.android.Utilities2.LocalMountPoint;
-import com.sentaroh.android.Utilities2.MiscUtil;
-import com.sentaroh.android.Utilities2.NotifyEvent;
-import com.sentaroh.android.Utilities2.NotifyEvent.NotifyEventListener;
-import com.sentaroh.android.Utilities2.SafFile3;
-import com.sentaroh.android.Utilities2.SafManager3;
-import com.sentaroh.android.Utilities2.SafStorage3;
-import com.sentaroh.android.Utilities2.ThemeUtil;
-import com.sentaroh.android.Utilities2.ThreadCtrl;
-import com.sentaroh.android.Utilities2.Zip.ZipUtil;
+import com.sentaroh.android.Utilities3.AppUncaughtExceptionHandler;
+import com.sentaroh.android.Utilities3.Dialog.CommonDialog;
+import com.sentaroh.android.Utilities3.Dialog.CommonFileSelector2;
+import com.sentaroh.android.Utilities3.Dialog.MessageDialogFragment;
+import com.sentaroh.android.Utilities3.Dialog.ProgressBarDialogFragment;
+import com.sentaroh.android.Utilities3.LocalMountPoint;
+import com.sentaroh.android.Utilities3.MiscUtil;
+import com.sentaroh.android.Utilities3.NotifyEvent;
+import com.sentaroh.android.Utilities3.NotifyEvent.NotifyEventListener;
+import com.sentaroh.android.Utilities3.SafFile3;
+import com.sentaroh.android.Utilities3.SafManager3;
+import com.sentaroh.android.Utilities3.SafStorage3;
+import com.sentaroh.android.Utilities3.ThemeUtil;
+import com.sentaroh.android.Utilities3.ThreadCtrl;
+import com.sentaroh.android.Utilities3.Zip.ZipUtil;
 
 import static com.sentaroh.android.TextFileBrowser.Constants.*;
 import static com.sentaroh.android.TextFileBrowser.LogWriter.LOG_FILE_NAME_ARCHIVE_PREFIX;
-import static com.sentaroh.android.Utilities2.Dialog.CommonFileSelector2.DIALOG_SELECT_CATEGORY_FILE;
+import static com.sentaroh.android.Utilities3.Dialog.CommonFileSelector2.DIALOG_SELECT_CATEGORY_FILE;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -375,8 +375,8 @@ public class MainActivity extends AppCompatActivity {
 	private void prepareShowFile(Intent in) {
         int flag=in.getFlags();
         log.debug("received flag="+String.format("0x%8x", flag)+", intent="+in.getData().toString());
-        final SafFile3 in_file=new SafFile3(mContext, in.getData());
         try {
+            final SafFile3 in_file=new SafFile3(mContext, in.getData());
             InputStream is=in_file.getInputStream();
             NotifyEvent ntfy=new NotifyEvent(mContext);
             ntfy.setListener(new NotifyEventListener() {
@@ -873,10 +873,10 @@ public class MainActivity extends AppCompatActivity {
         });
 
         final ProgressBarDialogFragment pbdf=ProgressBarDialogFragment.newInstance(
-                mContext.getString(com.sentaroh.android.Utilities2.R.string.msgs_log_file_list_dlg_send_zip_file_creating),
+                mContext.getString(com.sentaroh.android.Utilities3.R.string.msgs_log_file_list_dlg_send_zip_file_creating),
                 "",
-                mContext.getString(com.sentaroh.android.Utilities2.R.string.msgs_common_dialog_cancel),
-                mContext.getString(com.sentaroh.android.Utilities2.R.string.msgs_common_dialog_cancel));
+                mContext.getString(com.sentaroh.android.Utilities3.R.string.msgs_common_dialog_cancel),
+                mContext.getString(com.sentaroh.android.Utilities3.R.string.msgs_common_dialog_cancel));
         final FragmentManager fm=getSupportFragmentManager();
         pbdf.showDialog(fm, pbdf, ntfy,true);
         final Handler hndl=new Handler();
@@ -903,7 +903,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     lf.delete();
                     MessageDialogFragment mdf =MessageDialogFragment.newInstance(false, "W",
-                            mContext.getString(com.sentaroh.android.Utilities2.R.string.msgs_log_file_list_dlg_send_zip_file_cancelled), "");
+                            mContext.getString(com.sentaroh.android.Utilities3.R.string.msgs_log_file_list_dlg_send_zip_file_cancelled), "");
                     mdf.showDialog(fm, mdf, null);
                 }
                 pbdf.dismiss();
@@ -1352,7 +1352,7 @@ public class MainActivity extends AppCompatActivity {
         if (fl!=null && fl.length>0) {
             for(File cf:fl) {
                 File[] child_list=cf.listFiles();
-                for(File ch_item:child_list) if (!deleteCacheFile(ch_item)) break;
+                if (child_list!=null) for(File ch_item:child_list) if (!deleteCacheFile(ch_item)) break;
             }
         } else {
             fl=mContext.getExternalCacheDirs();

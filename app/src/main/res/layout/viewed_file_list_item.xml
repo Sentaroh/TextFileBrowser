@@ -1,5 +1,5 @@
-<!--<com.sentaroh.android.Utilities2.Widget.NonWordwrapCheckedTextView-->
-<com.sentaroh.android.Utilities2.Widget.NonWordwrapCheckedTextView
+<!--<com.sentaroh.android.Utilities3.Widget.NonWordwrapCheckedTextView-->
+<com.sentaroh.android.Utilities3.Widget.NonWordwrapCheckedTextView
 xmlns:android="http://schemas.android.com/apk/res/android"
 android:id="@+id/text1"
 android:layout_width="match_parent"

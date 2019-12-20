@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 29
-    buildToolsVersion '29.0.2'
+    buildToolsVersion "29.0.3"
     defaultConfig {
         applicationId "com.sentaroh.android.TextFileBrowser"
         minSdkVersion 23
@@ -66,8 +66,6 @@ android {
 }
 
 dependencies {
-//    implementation project(':Utilities')
-//    implementation(name:'Utilities-1.0.5', ext:'aar')
-    implementation files('libs/Utilities2-1.0.1.aar')
+    implementation files('libs/Utilities3-1.0.1.aar')
     implementation 'androidx.appcompat:appcompat:1.0.2'
 }

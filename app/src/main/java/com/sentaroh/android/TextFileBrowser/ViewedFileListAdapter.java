@@ -2,7 +2,7 @@ package com.sentaroh.android.TextFileBrowser;
 
 /*
 The MIT License (MIT)
-Copyright (c) 2011-2013 Sentaroh
+Copyright (c) 2011-2019 Sentaroh
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of 
 this software and associated documentation files (the "Software"), to deal 
@@ -40,8 +40,8 @@ import android.widget.CheckedTextView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.sentaroh.android.Utilities2.ThemeUtil;
-import com.sentaroh.android.Utilities2.Widget.NonWordwrapCheckedTextView;
+import com.sentaroh.android.Utilities3.ThemeUtil;
+import com.sentaroh.android.Utilities3.Widget.NonWordwrapCheckedTextView;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -2,7 +2,7 @@ package com.sentaroh.android.TextFileBrowser;
 
 /*
 The MIT License (MIT)
-Copyright (c) 2011-2013 Sentaroh
+Copyright (c) 2011-2019 Sentaroh
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of 
 this software and associated documentation files (the "Software"), to deal 
@@ -23,10 +23,10 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 */ 
 
-import com.sentaroh.android.Utilities2.NotifyEvent;
-import com.sentaroh.android.Utilities2.ThemeColorList;
-import com.sentaroh.android.Utilities2.ThemeUtil;
-import com.sentaroh.android.Utilities2.Widget.NonWordwrapTextView;
+import com.sentaroh.android.Utilities3.NotifyEvent;
+import com.sentaroh.android.Utilities3.ThemeColorList;
+import com.sentaroh.android.Utilities3.ThemeUtil;
+import com.sentaroh.android.Utilities3.Widget.NonWordwrapTextView;
 
 import android.app.Activity;
 import android.content.Context;

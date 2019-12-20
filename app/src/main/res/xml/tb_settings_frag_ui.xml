@@ -63,7 +63,7 @@
 			android:title="@string/settings_tb_use_light_theme_title"
 			android:summary="@string/settings_tb_use_light_theme_summary_ena" />
 
-        <com.sentaroh.android.Utilities2.Preference.ColorPickerPreference
+        <com.sentaroh.android.Utilities3.Preference.ColorPickerPreference
             android:key="@string/settings_tb_text_area_background_color"
             android:title="@string/settings_tb_text_area_background_color_title"/>
 
@@ -72,7 +72,7 @@
             android:title="@string/settings_tb_show_all_file_as_text_title"
             android:summary="@string/settings_tb_show_all_file_as_text_summary_ena" />
 
-        <com.sentaroh.android.Utilities2.Preference.ListEditPreference
+        <com.sentaroh.android.Utilities3.Preference.ListEditPreference
             android:key="@string/settings_tb_mime_type_to_open_text_mode"
             android:title="@string/settings_tb_mime_type_to_open_text_mode_title"/>
 

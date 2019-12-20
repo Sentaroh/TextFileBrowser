@@ -57,7 +57,7 @@
         </activity>
 
         <activity
-            android:name="com.sentaroh.android.Utilities2.CrashReport"
+            android:name="com.sentaroh.android.Utilities3.CrashReport"
             android:process=":CrashReport"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|layoutDirection|fontScale"
             android:screenOrientation="unspecified" android:launchMode="standard">

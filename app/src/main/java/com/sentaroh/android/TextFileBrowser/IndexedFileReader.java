@@ -2,7 +2,7 @@ package com.sentaroh.android.TextFileBrowser;
 
 /*
  The MIT License (MIT)
- Copyright (c) 2011-2013 Sentaroh
+ Copyright (c) 2011-2019 Sentaroh
 
  Permission is hereby granted, free of charge, to any person obtaining a copy of 
  this software and associated documentation files (the "Software"), to deal 
@@ -58,13 +58,13 @@ import android.util.Log;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.sentaroh.android.Utilities2.EncryptUtil;
-import com.sentaroh.android.Utilities2.MiscUtil;
-import com.sentaroh.android.Utilities2.LocalMountPoint;
-import com.sentaroh.android.Utilities2.NotifyEvent;
-import com.sentaroh.android.Utilities2.SafFile3;
-import com.sentaroh.android.Utilities2.ThreadCtrl;
-import com.sentaroh.android.Utilities2.Dialog.CommonDialog;
+import com.sentaroh.android.Utilities3.EncryptUtilV3;
+import com.sentaroh.android.Utilities3.MiscUtil;
+import com.sentaroh.android.Utilities3.LocalMountPoint;
+import com.sentaroh.android.Utilities3.NotifyEvent;
+import com.sentaroh.android.Utilities3.SafFile3;
+import com.sentaroh.android.Utilities3.ThreadCtrl;
+import com.sentaroh.android.Utilities3.Dialog.CommonDialog;
 
 public class IndexedFileReader {
 
@@ -704,7 +704,7 @@ public class IndexedFileReader {
         String dir=getCacheDirectory(cparms.context);
 		String idx_path="";
 		try {
-			idx_path = dir+EncryptUtil.makeSHA1Hash(cparms.input_file.getPath());
+			idx_path = dir+EncryptUtilV3.makeSHA1Hash(cparms.input_file.getPath());
 		} catch (NoSuchAlgorithmException e1) {
 			e1.printStackTrace();
 		}
@@ -792,7 +792,7 @@ public class IndexedFileReader {
 
 		String idx_path="";
 		try {
-			idx_path = dir+EncryptUtil.makeSHA1Hash(cparms.input_file.getPath());
+			idx_path = dir+EncryptUtilV3.makeSHA1Hash(cparms.input_file.getPath());
 		} catch (NoSuchAlgorithmException e1) {
 			e1.printStackTrace();
 		}

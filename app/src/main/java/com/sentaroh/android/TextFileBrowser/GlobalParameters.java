@@ -2,7 +2,7 @@ package com.sentaroh.android.TextFileBrowser;
 
 /*
 The MIT License (MIT)
-Copyright (c) 2011-2013 Sentaroh
+Copyright (c) 2011-2019 Sentaroh
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of 
 this software and associated documentation files (the "Software"), to deal 
@@ -30,11 +30,11 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
 
-import com.sentaroh.android.Utilities2.SafFile3;
-import com.sentaroh.android.Utilities2.SafManager3;
-import com.sentaroh.android.Utilities2.StringUtil;
-import com.sentaroh.android.Utilities2.ThemeColorList;
-import com.sentaroh.android.Utilities2.ThemeUtil;
+import com.sentaroh.android.Utilities3.SafFile3;
+import com.sentaroh.android.Utilities3.SafManager3;
+import com.sentaroh.android.Utilities3.StringUtil;
+import com.sentaroh.android.Utilities3.ThemeColorList;
+import com.sentaroh.android.Utilities3.ThemeUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
