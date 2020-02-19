@@ -627,7 +627,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 			} else {
                 final ViewedFileListItem vfli=getViewedFileListItem(mGp.currentViewedFile);
-                if (vfli.searchEnabled) {
+                if (vfli.searchEnabled && vfli.file_view_fragment!=null) {
                     vfli.file_view_fragment.switchFindWidget();
                 } else {
                     confirmExit();
