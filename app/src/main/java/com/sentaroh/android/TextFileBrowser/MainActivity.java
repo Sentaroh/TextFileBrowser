@@ -69,6 +69,7 @@ import com.sentaroh.android.Utilities3.Zip.ZipUtil;
 import static com.sentaroh.android.TextFileBrowser.Constants.*;
 import static com.sentaroh.android.TextFileBrowser.LogWriter.LOG_FILE_NAME_ARCHIVE_PREFIX;
 import static com.sentaroh.android.Utilities3.Dialog.CommonFileSelector2.DIALOG_SELECT_CATEGORY_FILE;
+import static com.sentaroh.android.Utilities3.SafManager3.SCOPED_STORAGE_SDK;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -308,7 +309,7 @@ public class MainActivity extends AppCompatActivity {
 		    	ntfy.setListener(new NotifyEventListener() {
                     @Override
                     public void positiveResponse(Context context, Object[] objects) {
-                        if (Build.VERSION.SDK_INT>=29) {
+                        if (Build.VERSION.SDK_INT>=SCOPED_STORAGE_SDK) {
                             checkInternalStoragePermissions();
                         } else {
                             showFileSelectDialog();
@@ -873,10 +874,10 @@ public class MainActivity extends AppCompatActivity {
         });
 
         final ProgressBarDialogFragment pbdf=ProgressBarDialogFragment.newInstance(
-                mContext.getString(com.sentaroh.android.Utilities3.R.string.msgs_log_file_list_dlg_send_zip_file_creating),
+                mContext.getString(R.string.msgs_log_file_list_dlg_send_zip_file_creating),
                 "",
-                mContext.getString(com.sentaroh.android.Utilities3.R.string.msgs_common_dialog_cancel),
-                mContext.getString(com.sentaroh.android.Utilities3.R.string.msgs_common_dialog_cancel));
+                mContext.getString(R.string.msgs_common_dialog_cancel),
+                mContext.getString(R.string.msgs_common_dialog_cancel));
         final FragmentManager fm=getSupportFragmentManager();
         pbdf.showDialog(fm, pbdf, ntfy,true);
         final Handler hndl=new Handler();
@@ -903,7 +904,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     lf.delete();
                     MessageDialogFragment mdf =MessageDialogFragment.newInstance(false, "W",
-                            mContext.getString(com.sentaroh.android.Utilities3.R.string.msgs_log_file_list_dlg_send_zip_file_cancelled), "");
+                            mContext.getString(R.string.msgs_log_file_list_dlg_send_zip_file_cancelled), "");
                     mdf.showDialog(fm, mdf, null);
                 }
                 pbdf.dismiss();
@@ -937,7 +938,7 @@ public class MainActivity extends AppCompatActivity {
 
 	private SafManager3.StorageVolumeInfo mPrimaryStorageVolume=null;
     private void checkInternalStoragePermissions() {
-        if (Build.VERSION.SDK_INT>=29) {
+        if (Build.VERSION.SDK_INT>=SCOPED_STORAGE_SDK) {
             ArrayList<SafStorage3>sl= mGp.safMgr.getSafStorageList();
             if (sl.size()==0) {
                 ArrayList<SafManager3.StorageVolumeInfo>vol_list=SafManager3.getStorageVolumeInfo(mContext);
@@ -995,7 +996,7 @@ public class MainActivity extends AppCompatActivity {
     private final int REQUEST_PERMISSIONS_WRITE_EXTERNAL_STORAGE=1;
     @SuppressLint("NewApi")
     private boolean checkLegacyStoragePermissions(final NotifyEvent p_ntfy) {
-        if (Build.VERSION.SDK_INT>=23 && Build.VERSION.SDK_INT<=28) {
+        if (Build.VERSION.SDK_INT>=23 && Build.VERSION.SDK_INT<=29) {
             log.debug("Prermission WriteExternalStorage="+checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)+
                     ", WakeLock="+checkSelfPermission(Manifest.permission.WAKE_LOCK));
             if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -1287,7 +1288,8 @@ public class MainActivity extends AppCompatActivity {
                                     break;
                                 } else {
                                     if (!svi.uuid.equals(SafManager3.SAF_FILE_PRIMARY_UUID)) {
-                                        intent=svi.volume.createAccessIntent(null);
+                                        if (Build.VERSION.SDK_INT>=29) intent=svi.volume.createOpenDocumentTreeIntent();
+                                        else intent=svi.volume.createAccessIntent(null);
                                         startActivityForResult(intent, req_code);
                                         break;
                                     }
