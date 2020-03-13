@@ -1194,14 +1194,14 @@ public class FileViewerFragment extends Fragment {
 		mMainViewScrollRight1.setOnTouchListener(new OnTouchListener(){
 			@Override
 			public boolean onTouch(View arg0, MotionEvent event) {
-                scrollTouchListener("Left1",arg0, event, SCROLL_LARGE_AMOUNT);
+                scrollTouchListener("Right1",arg0, event, SCROLL_LARGE_AMOUNT);
 				return false;
 			}
 		});
 		mMainViewScrollRight2.setOnTouchListener(new OnTouchListener(){
 			@Override
 			public boolean onTouch(View arg0, MotionEvent event) {
-                scrollTouchListener("Left1",arg0, event, SCROLL_SMALL_AMOUNT);
+                scrollTouchListener("Right2",arg0, event, SCROLL_SMALL_AMOUNT);
 				return false;
 			}
 		});
@@ -1223,27 +1223,35 @@ public class FileViewerFragment extends Fragment {
 	};
 
 	private void scrollTouchListener(String id, View arg0, MotionEvent event, int scroll_amount) {
-        if (event.getAction()==MotionEvent.ACTION_DOWN) {
-            if (log.isTraceEnabled()) log.trace(id+" Action=ACTION_DOWN, amount="+scroll_amount+", tc="+mTcScroll.isEnabled());
-            if (mScrollActive) {
-                mTcScroll.setDisabled();
+	    if (mTextListAdapter!=null) {
+            if (event.getAction()==MotionEvent.ACTION_DOWN) {
+                if (log.isTraceEnabled()) log.trace(id+" Action=ACTION_DOWN, amount="+scroll_amount+", tc="+mTcScroll.isEnabled());
+                if (mScrollActive) {
+                    mTcScroll.setDisabled();
 //                log.trace(id+" mThScroll isAlive="+mThScroll.isAlive()+", isDeamon="+mThScroll.isDaemon()+", isInterrupted="+mThScroll.isInterrupted());
+                    waitThreadTerminate();
+                    mTcScroll.setEnabled();
+                }
+                startScroll(mTcScroll, scroll_amount);//Scroll left
+            } else if (event.getAction()==MotionEvent.ACTION_UP) {
+                if (log.isTraceEnabled()) log.trace(id+" Action=ACTION_UP, amount="+scroll_amount+", tc="+mTcScroll.isEnabled());
+                mTcScroll.setDisabled();
+                waitThreadTerminate();
+                mTcScroll.setEnabled();
+            } else if (event.getAction()==MotionEvent.ACTION_CANCEL) {
+                if (log.isTraceEnabled()) log.trace(id+" Action=ACTION_CANCEL, amount="+scroll_amount+", tc="+mTcScroll.isEnabled());
+                mTcScroll.setDisabled();
                 waitThreadTerminate();
                 mTcScroll.setEnabled();
             }
-            startScroll(mTcScroll, scroll_amount);//Scroll left
-        } else if (event.getAction()==MotionEvent.ACTION_UP) {
-            if (log.isTraceEnabled()) log.trace(id+" Action=ACTION_UP, amount="+scroll_amount+", tc="+mTcScroll.isEnabled());
-            mTcScroll.setDisabled();
-            waitThreadTerminate();
-            mTcScroll.setEnabled();
-        } else if (event.getAction()==MotionEvent.ACTION_CANCEL) {
-            if (log.isTraceEnabled()) log.trace(id+" Action=ACTION_CANCEL, amount="+scroll_amount+", tc="+mTcScroll.isEnabled());
-            mTcScroll.setDisabled();
-            waitThreadTerminate();
-            mTcScroll.setEnabled();
+        } else {
+            showDialogMessage("E", "Internal error", "scrollTouchListener ignored, mTextListAdapetr is null");
+            log.debug("scrollTouchListener ignored, mTextListAdapetr is null");
+            mMainViewScrollRight1.setEnabled(false);
+            mMainViewScrollRight2.setEnabled(false);
+            mMainViewScrollLeft1.setEnabled(false);
+            mMainViewScrollLeft2.setEnabled(false);
         }
-
     }
 
 	private void waitThreadTerminate() {
@@ -1363,5 +1371,10 @@ public class FileViewerFragment extends Fragment {
 			e.printStackTrace();
 		}
 	};
+
+	private void showDialogMessage(String cat, String title, String message) {
+        MessageDialogFragment cdf =MessageDialogFragment.newInstance(false, cat, title, message);
+        cdf.showDialog(getFragmentManager(),cdf,null);
+    }
 
 }
