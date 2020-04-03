@@ -1157,7 +1157,7 @@ public class MainActivity extends AppCompatActivity {
 		if (!prev_bgc.equals(mGp.settingTextAreaBackgroundColor)) {
 		    mGp.applyTextAreaBackGroundColor();
 		    for(ViewedFileListItem vfli:mGp.viewedFileList) {
-		        vfli.file_view_fragment.reloadScreen();
+		        if (vfli!=null && vfli.file_view_fragment!=null) vfli.file_view_fragment.reloadScreen();
             }
         }
 
