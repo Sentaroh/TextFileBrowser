@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
 	private FragmentManager mFragmentManager=null;
 	
 	private Context mContext;
-	private Activity mActivity;
+	private MainActivity mActivity;
 
 	@Override  
 	protected void onSaveInstanceState(Bundle outState) {
@@ -228,8 +228,8 @@ public class MainActivity extends AppCompatActivity {
 //        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
 //        StrictMode.setVmPolicy(builder.build());
 
-        mContext=this;
-        mActivity=this;
+        mContext=MainActivity.this.getApplicationContext();
+        mActivity=MainActivity.this;
         mFragmentManager=getSupportFragmentManager();
         mRestartStatus=0;
         mGp =GlobalWorkArea.getGlobalParameters(mActivity);
@@ -337,7 +337,7 @@ public class MainActivity extends AppCompatActivity {
 				
 				vfli.file_view_fragment=FileViewerFragment.newInstance(vfli.viewd_file.getPath());
 				vfli.tc_view=new ThreadCtrl();
-		        vfli.ix_reader_view=new IndexedFileReader(this, mCommonDlg,
+		        vfli.ix_reader_view=new IndexedFileReader(mContext, mCommonDlg,
 		        		vfli.tc_view,
 //		        		mGp.settingEncodeName,
 		        		mGp.settingDefaultEncodeName,
@@ -345,7 +345,7 @@ public class MainActivity extends AppCompatActivity {
 		        		mGp.settingBufferCharIndexSize,
 		        		mGp.settingBufferHexIndexSize,
 		        		mGp.settingBufferPoolSize,
-		        		this);
+		        		mActivity);
 //				mViewedFileListAdapter.notifyDataSetChanged();
 				if (i==mSavedViewedFileListSpinnerPosition)
 					mGp.currentViewedFile=vfli.viewd_file;
@@ -469,7 +469,7 @@ public class MainActivity extends AppCompatActivity {
 		vfli.viewd_file=in_file;
         mGp.viewedFileList.add(vfli);
 
-        vfli.ix_reader_view=new IndexedFileReader(this, mCommonDlg,
+        vfli.ix_reader_view=new IndexedFileReader(mContext, mCommonDlg,
         		vfli.tc_view,
 //        		mGp.settingEncodeName,
         		mGp.settingDefaultEncodeName,
@@ -477,7 +477,7 @@ public class MainActivity extends AppCompatActivity {
         		mGp.settingBufferCharIndexSize,
         		mGp.settingBufferHexIndexSize,
         		mGp.settingBufferPoolSize,
-        		this);
+        		mActivity);
         mViewedFileListAdapter.notifyDataSetChanged();
         vfli.file_view_fragment=FileViewerFragment.newInstance(in_file.getPath());
 
@@ -934,7 +934,7 @@ public class MainActivity extends AppCompatActivity {
 
 	public void invokeSettings() {
 		log.debug("invokeSettings Entered");
-		Intent intent = new Intent(this,SettingsActivity.class);
+		Intent intent = new Intent(mContext,SettingsActivity.class);
 		startActivityForResult(intent,0);
 	}
 
@@ -1314,7 +1314,7 @@ public class MainActivity extends AppCompatActivity {
 //                else showFileSelectDialog();
             }
         });
-        StoragePermission sp=new StoragePermission(this, mGp.safMgr, mCommonDlg, ntfy_request);
+        StoragePermission sp=new StoragePermission(mActivity, mGp.safMgr, mCommonDlg, ntfy_request);
         sp.showDialog();
     }
 
