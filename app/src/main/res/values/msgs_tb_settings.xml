@@ -281,6 +281,7 @@
     <string name="settings_tb_show_all_file_as_text">settings_tb_show_all_file_as_text</string>
 
     <string name="settings_tb_mime_type_to_open_text_mode_title">Mime type to open as a Text</string>
+    <string name="settings_tb_mime_type_to_open_text_mode_hint">Mime Type</string>
     <string name="settings_tb_mime_type_to_open_text_mode">settings_tb_mime_type_to_open_text_mode</string>
 
     <string name="settings_tb_use_no_word_wrap_text_view_title">Use no wrap text view</string>

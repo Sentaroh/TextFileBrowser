@@ -207,5 +207,6 @@
     <string name="settings_tb_show_all_file_as_text_summary_ena">常に全てのファイルをテキストで開く</string>
 
     <string name="settings_tb_mime_type_to_open_text_mode_title">テキストで開くMime Type</string>
+    <string name="settings_tb_mime_type_to_open_text_mode_hint">Mime Type</string>
 
 </resources>
