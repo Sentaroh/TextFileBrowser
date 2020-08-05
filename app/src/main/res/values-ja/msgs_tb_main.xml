@@ -27,6 +27,7 @@
 	<string name="msgs_text_browser_reset_copy">コピー範囲取消</string>
 	<string name="msgs_text_browser_select_all_for_copy">全て選択</string>
 	<string name="msgs_text_browser_copymsg_copied">%s行をクリップボードにコピーしました</string>
+    <string name="msgs_text_browser_copymsg_can_not_copied_gt_5mib">コピーする文字数が5MiBを越えています。コピーする行数を少なくしてください。</string>
 	<string name="msgs_text_browser_copymsg_specify_end">コピー範囲の指定中です、終了を指定してください</string>
 
 	<string name="msgs_text_browser_select_view_file">表示ファイルの選択</string>

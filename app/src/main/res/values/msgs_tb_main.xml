@@ -28,6 +28,7 @@
 	<string name="msgs_text_browser_reset_copy">Clear copy position</string>
 	<string name="msgs_text_browser_select_all_for_copy">Select all lines for copy</string>
 	<string name="msgs_text_browser_copymsg_copied">%s line(s) copied to clipboard</string>
+    <string name="msgs_text_browser_copymsg_can_not_copied_gt_5mib">The number of characters to be copied exceeds 5 MiB. Please reduce the number of lines to be copied.</string>
 	<string name="msgs_text_browser_copymsg_specify_end">Copy has been initiated, please determine the end position.</string>
 
 	<string name="msgs_text_browser_select_view_file">Select file</string>

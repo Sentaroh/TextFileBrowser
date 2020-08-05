@@ -39,6 +39,7 @@ import com.sentaroh.android.Utilities3.ContextMenu.CustomContextMenu;
 import com.sentaroh.android.Utilities3.ContextMenu.CustomContextMenuItem.CustomContextMenuOnClickListener;
 
 import android.annotation.SuppressLint;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -48,7 +49,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.renderscript.ScriptGroup;
-import android.text.ClipboardManager;
+import android.content.ClipboardManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -421,8 +422,7 @@ public class FileViewerFragment extends Fragment {
                         }
                         if (pos>=s_pos && pos<=e_pos) {
                             final TextView main_view_msg=(TextView)mMainView.findViewById(R.id.activity_browser_main_msg);
-                            String msg=copyToClipboard(s_pos, e_pos, mTextListAdapter);
-                            CommonDialog.showToastShort(mMainActivity, msg);
+                            copyToClipboard(s_pos, e_pos, mTextListAdapter);
                             main_view_msg.setVisibility(TextView.GONE);
                             main_view_msg.setText("");
                             mTextListAdapter.resetCopy();
@@ -434,8 +434,7 @@ public class FileViewerFragment extends Fragment {
                     } else {
                         if (mTextListAdapter.getCopyBegin()==pos) {
                             final TextView main_view_msg=(TextView)mMainView.findViewById(R.id.activity_browser_main_msg);
-                            String msg=copyToClipboard(pos, pos, mTextListAdapter);
-                            CommonDialog.showToastShort(mMainActivity, msg);
+                            copyToClipboard(pos, pos, mTextListAdapter);
                             main_view_msg.setVisibility(TextView.GONE);
                             main_view_msg.setText("");
                             mTextListAdapter.resetCopy();
@@ -978,17 +977,13 @@ public class FileViewerFragment extends Fragment {
                 .setOnClickListener(new CustomContextMenuOnClickListener() {
                     @Override
                     public void onClick(CharSequence menuTitle) {
-                        String msg="";
                         if (adapter.isCopyActive()) {
-                            if (adapter.getCopyBegin()>adapter.getCopyEnd())
-                                msg=copyToClipboard(adapter.getCopyEnd(),adapter.getCopyBegin(),adapter);
-                            else msg=copyToClipboard(adapter.getCopyBegin(),adapter.getCopyEnd(),adapter);
-                            CommonDialog.showToastShort(mMainActivity, msg);
+                            if (adapter.getCopyBegin()>adapter.getCopyEnd()) copyToClipboard(adapter.getCopyEnd(),adapter.getCopyBegin(),adapter);
+                            else copyToClipboard(adapter.getCopyBegin(),adapter.getCopyEnd(),adapter);
                             adapter.resetCopy();
                             adapter.notifyDataSetChanged();
                         } else {
-                            msg=copyToClipboard(pos,pos,adapter);
-                            CommonDialog.showToastShort(mMainActivity, msg);
+                            copyToClipboard(pos,pos,adapter);
                             adapter.resetCopy();
                             adapter.notifyDataSetChanged();
                         }
@@ -1041,8 +1036,8 @@ public class FileViewerFragment extends Fragment {
                 });
     }
 
-    private String copyToClipboard(int from_line, int to_line, FileViewerAdapter adapter) {
-		 ClipboardManager cm = 
+    private void copyToClipboard(int from_line, int to_line, FileViewerAdapter adapter) {
+		 ClipboardManager cm =
 		      (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
 		 String sep="";
 		 int c_line=0;
@@ -1053,9 +1048,15 @@ public class FileViewerFragment extends Fragment {
 			 out.append(adapter.getItem(i)[0]);
 			 sep="\n";
 		 }
-		 cm.setText(out);
-		 return String.format(getString(R.string.msgs_text_browser_copymsg_copied),c_line);
-	};
+		 if (out.length()<=(1024*1024*5)) {
+		     cm.setPrimaryClip(ClipData.newPlainText("TextFileBrowser", out.toString()));
+             CommonDialog.showToastShort(mMainActivity, String.format(getString(R.string.msgs_text_browser_copymsg_copied),c_line));
+         } else {
+             MessageDialogFragment cdf =MessageDialogFragment.newInstance(false, "I", "Clipboard copy error",
+                             mContext.getString(R.string.msgs_text_browser_copymsg_can_not_copied_gt_5mib));
+             cdf.showDialog(getFragmentManager(),cdf,null);
+         }
+	}
 
 	public void switchFindWidget() {
         final LinearLayout find_view = (LinearLayout) mMainView.findViewById(R.id.activity_browser_main_search_find_view);
