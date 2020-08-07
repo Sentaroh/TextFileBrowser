@@ -334,7 +334,9 @@ public class MainActivity extends AppCompatActivity {
 				vfli.viewerParmsRestoreRequired=true;
 				vfli.encodeName="";
 				
-				vfli.file_view_fragment=FileViewerFragment.newInstance(vfli.viewd_file.getPath());
+				vfli.file_view_fragment=FileViewerFragment.newInstance();
+                vfli.file_view_fragment.setFileViewerParameter(vfli.viewd_file);
+
 				vfli.tc_view=new ThreadCtrl();
 		        vfli.ix_reader_view=new IndexedFileReader(mContext, mCommonDlg,
 		        		vfli.tc_view,
@@ -379,7 +381,7 @@ public class MainActivity extends AppCompatActivity {
         log.debug("received flag="+String.format("0x%8x", flag)+", intent="+in.getData().toString());
         try {
             final SafFile3 in_file=new SafFile3(mContext, in.getData());
-            InputStream is=in_file.getInputStream();
+            InputStream is=in_file.getInputStreamByUri();
             NotifyEvent ntfy=new NotifyEvent(mContext);
             ntfy.setListener(new NotifyEventListener() {
                 @Override
@@ -478,7 +480,8 @@ public class MainActivity extends AppCompatActivity {
         		mGp.settingBufferPoolSize,
         		mActivity);
         mViewedFileListAdapter.notifyDataSetChanged();
-        vfli.file_view_fragment=FileViewerFragment.newInstance(in_file.getPath());
+        vfli.file_view_fragment=FileViewerFragment.newInstance();
+        vfli.file_view_fragment.setFileViewerParameter(in_file);
 
         if (set_selection)
         	mViewedFileListSpinner.setSelection(mGp.viewedFileList.size()-1);
@@ -546,7 +549,8 @@ public class MainActivity extends AppCompatActivity {
 					ft.replace(R.id.container, vfli.file_view_fragment);
 					ft.commit();
 				} else {
-			        vfli.file_view_fragment=FileViewerFragment.newInstance(in_file.getPath());
+			        vfli.file_view_fragment=FileViewerFragment.newInstance();
+                    vfli.file_view_fragment.setFileViewerParameter(in_file);
 					FragmentTransaction ft=mFragmentManager.beginTransaction();
 					ft.setTransition(FragmentTransaction.TRANSIT_NONE);
 					ft.replace(R.id.container, vfli.file_view_fragment);
@@ -1139,6 +1143,7 @@ public class MainActivity extends AppCompatActivity {
 			}
 			ViewedFileListItem vf=getViewedFileListItem(mGp.currentViewedFile);
 			FileViewerFragment fvf=(FileViewerFragment)vf.file_view_fragment;
+//			fvf.setFileViewerParameter(vf.viewd_file);
 			fvf.rebuildTextListAdapter(false);
 		}
 

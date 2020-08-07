@@ -74,6 +74,7 @@ import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -108,28 +109,33 @@ public class FileViewerFragment extends Fragment {
 	private TextView mMainViewMsgArea;
 	private ProgressBar mMainViewProgressBar;
 
-	private Button mMainViewScrollLeft1, mMainViewScrollLeft2,
-			mMainViewScrollRight1, mMainViewScrollRight2;
+	private Button mMainViewScrollLeft1, mMainViewScrollLeft2, mMainViewScrollRight1, mMainViewScrollRight2;
 	private ThreadCtrl mTcScroll;
 	private Thread mThScroll=null;
 	private boolean mScrollActive=false;
+
+	private SafFile3 mInputFile=null;
 
 
 //	public void setOptions(boolean debug, int mln) {
 //		mGp.debugEnabled=debug;
 //	}
 	
-	public static FileViewerFragment newInstance(String path) {
+	public static FileViewerFragment newInstance() {
 //		if (mDebugEnable) 
 //		log.debug("newInstance fp="+filepath);
 		FileViewerFragment frag = new FileViewerFragment();
         Bundle bundle = new Bundle();
-        bundle.putString("Path", path);
+//        bundle.putString("Path", path);
         frag.setArguments(bundle);
         return frag;
     };
-    
-	public FileViewerFragment() {
+
+    public void setFileViewerParameter(SafFile3 sf) {
+        mInputFile=sf;
+    }
+
+    public FileViewerFragment() {
 //		log.debug("Constructor(Default)");
 	};
 
@@ -223,7 +229,7 @@ public class FileViewerFragment extends Fragment {
         mFragmentManager=getFragmentManager();
         mRestartStatus=0;
 
-        String path=getArguments().getString("Path");
+        String path=mInputFile.getPath();
         for (ViewedFileListItem item: mGp.viewedFileList) {
             if (item.viewd_file.getPath().equals(path)) {
                 mMainUriFile=item.viewd_file;
@@ -249,7 +255,6 @@ public class FileViewerFragment extends Fragment {
             		found=true;
             		mViewedFile= mGp.viewedFileList.get(i);
             		mViewedFile.file_view_fragment=this;
-//            		Log.v("","frag update="+mViewedFile.file_view_fragment);
             		mIdxReader=mViewedFile.ix_reader_view;
             		mTcIndexReader=mViewedFile.tc_view;
             		if (mViewedFile.viewerParmsInitRequired) {
@@ -383,7 +388,7 @@ public class FileViewerFragment extends Fragment {
 			if (mIdxReader!=null) createFileIndexList(mMainUriFile, ntfy);
 			else ntfy.notifyToListener(false, null);
 		} else if (mRestartStatus==1) {
-            if (!mMainUriFile.exists()) {
+            if (!isFileExists(mContext, mMainUriFile)) {
                 mMainViewMsgArea.post(new Runnable() {
                     @Override
                     public void run() {
@@ -576,7 +581,7 @@ public class FileViewerFragment extends Fragment {
 	private boolean createFileIndexList(SafFile3 in_file, final NotifyEvent p_ntfy) {
 	    boolean result=false;
         try {
-            InputStream is=in_file.getInputStream();
+            InputStream is=in_file.getInputStreamByUri();
             if (is.available()<(1024*1024*1024*2)-1024) {
                 ProgressBar pb=(ProgressBar)mMainView.findViewById(R.id.activity_browser_main_progress_bar);
                 mIdxReader.houseKeepIndexCacheFolder(mGp.settingIndexCache);
@@ -637,34 +642,20 @@ public class FileViewerFragment extends Fragment {
 		}
 	};
 
-//	static public boolean isFileExists(Context c, UriFileInfo file_info) {
-//        boolean file_exists=false;
-//        if (file_info.uri_type.equals(UriFileInfo.URI_TYPE_CONTENT_SCHEME)) {
-//            try {
-//                InputStream is = c.getContentResolver().openInputStream(file_info.uri);
-//                file_exists = true;
-//            } catch (Exception e) {
-////            e.printStackTrace();
-//            }
-//        } else if (file_info.uri_type.equals(UriFileInfo.URI_TYPE_SAF_FILE_SCHEME)) {
-//                try {
-//                    InputStream is=c.getContentResolver().openInputStream(file_info.uri);
-//                    file_exists=true;
-//                } catch (Exception e) {
-////            e.printStackTrace();
-//                }
-//        } else {
-//            try {
-//                if (file_info.file_path!=null) {
-//                    File lf=new File(file_info.file_path);
-//                    file_exists=lf.exists();
-//                }
-//            } catch (Exception e) {
-////            e.printStackTrace();
-//            }
-//        }
-//        return file_exists;
-//    }
+	static public boolean isFileExists(Context c, SafFile3 sf) {
+        boolean file_exists=false;
+        try {
+            InputStream is=sf.getInputStream();
+            if (is!=null) return true;
+        } catch(Exception e) {
+            try {
+                InputStream is=sf.getInputStreamByUri();
+                return true;
+            } catch (Exception e2) {
+            }
+        }
+        return file_exists;
+    }
 
 	@SuppressLint("NewApi")
 	private void buildTextListAdapter() {
@@ -692,7 +683,7 @@ public class FileViewerFragment extends Fragment {
             public void negativeResponse(Context context, Object[] objects) {}
         });
 
-        boolean file_exists=mMainUriFile.exists();
+        boolean file_exists=isFileExists(mContext, mMainUriFile);//mMainUriFile.exists();
         if (file_exists) {
             int ts=1;
 //            if (mGp.settingFontFamily.equals("MONOSPACE") || mViewedFile.lineBreak==CustomTextView.LINE_BREAK_NOTHING) ts=mGp.settingTabStop;

@@ -444,7 +444,7 @@ public class IndexedFileReader {
 		try {
 			if (mode==FileViewerAdapter.TEXT_BROWSER_BROWSE_MODE_CHAR) {
 				tfli=tbidx_char.get(block_no);
-				fis=cparms.input_file.getInputStream();
+				fis=cparms.input_file.getInputStreamByUri();
 				byte[] buff= new byte[cparms.charModeBlockSize];
 				fis.skip(tfli.start_pos);
 				fis.read(buff);
@@ -458,7 +458,7 @@ public class IndexedFileReader {
 				createCharModeTextList(cparms,tc,tal,tfli,buff, (int)(tfli.end_pos-tfli.start_pos+1), isMonospaceFontUsed);
 			} else {
 				tfli=tbidx_hex.get(block_no);
-                fis=cparms.input_file.getInputStream();
+                fis=cparms.input_file.getInputStreamByUri();
 				byte[] buff= new byte[cparms.hexModeBlockSize];
                 fis.skip(tfli.start_pos);
                 fis.read(buff);
@@ -718,7 +718,7 @@ public class IndexedFileReader {
 			    FileIndexCacheHolder fich=new FileIndexCacheHolder();
 			    fich.readExternal(ois);
 			    ois.close();
-			    InputStream is=cparms.input_file.getInputStream();
+			    InputStream is=cparms.input_file.getInputStreamByUri();
 
 			    log.info("loadFileIndex fich.file_size="+fich.file_size+", is.available()="+is.available()+
                         ", fich.last_modified="+fich.last_modified+", file_last_modified="+cparms.input_file.lastModified()+
@@ -809,7 +809,7 @@ public class IndexedFileReader {
 			    FileIndexCacheHolder fich = new FileIndexCacheHolder();
 			    fich.file_path=cparms.input_file.getPath();
 			    fich.encode_name=cparms.encodeName;
-			    InputStream is=cparms.input_file.getInputStream();
+			    InputStream is=cparms.input_file.getInputStreamByUri();
 			    fich.file_size=is.available();
 			    fich.last_modified=cparms.input_file.lastModified();
 			    
@@ -850,7 +850,7 @@ public class IndexedFileReader {
 		InputStream fis=null;
 		BufferedInputStream bis=null;
 		try {
-			fis=cparms.input_file.getInputStream();
+			fis=cparms.input_file.getInputStreamByUri();
 			bis=new BufferedInputStream(fis,INDEX_CREATE_BUFFER_SIZE);
 		    long f_size=bis.available();
 //		    Log.v("","fs="+lf.length()+", f_s="+f_size);
@@ -941,7 +941,7 @@ public class IndexedFileReader {
 		if (log.isDebugEnabled()) debugMsg("createHexModeIndexList","entered");
 		boolean success=true;
         try {
-            InputStream is=cparms.input_file.getInputStream();
+            InputStream is=cparms.input_file.getInputStreamByUri();
             long f_size=is.available();
             for (long f_idx=0;f_idx<f_size;f_idx+=cparms.hexModeBlockSize) {
                 if (!tc.isEnabled()) {
