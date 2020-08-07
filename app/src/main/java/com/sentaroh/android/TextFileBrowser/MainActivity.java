@@ -71,7 +71,6 @@ import com.sentaroh.android.Utilities3.Zip.ZipUtil;
 import static com.sentaroh.android.TextFileBrowser.Constants.*;
 import static com.sentaroh.android.TextFileBrowser.LogWriter.LOG_FILE_NAME_ARCHIVE_PREFIX;
 import static com.sentaroh.android.Utilities3.Dialog.CommonFileSelector2.DIALOG_SELECT_CATEGORY_FILE;
-import static com.sentaroh.android.Utilities3.SafManager3.SCOPED_STORAGE_SDK;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -311,11 +310,11 @@ public class MainActivity extends AppCompatActivity {
 		    	ntfy.setListener(new NotifyEventListener() {
                     @Override
                     public void positiveResponse(Context context, Object[] objects) {
-                        if (Build.VERSION.SDK_INT>=SCOPED_STORAGE_SDK) {
-                            checkInternalStoragePermissions();
-                        } else {
-                            showFileSelectDialog();
-                        }
+//                        if (Build.VERSION.SDK_INT>=SCOPED_STORAGE_SDK) {
+//                            checkInternalStoragePermissions();
+//                        } else {
+//                        }
+                        showFileSelectDialog();
                     }
                     @Override
                     public void negativeResponse(Context context, Object[] objects) {}
@@ -939,42 +938,42 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	private SafManager3.StorageVolumeInfo mPrimaryStorageVolume=null;
-    private void checkInternalStoragePermissions() {
-        if (Build.VERSION.SDK_INT>=SCOPED_STORAGE_SDK) {
-            ArrayList<SafStorage3>sl= mGp.safMgr.getSafStorageList();
-            if (sl.size()==0) {
-                ArrayList<SafManager3.StorageVolumeInfo>vol_list=SafManager3.getStorageVolumeInfo(mContext);
-                SafManager3.StorageVolumeInfo primary_svid_temp=null;
-                for(SafManager3.StorageVolumeInfo svi:vol_list) {
-                    if (svi.uuid.equals(SafFile3.SAF_FILE_PRIMARY_UUID)) {
-                        mPrimaryStorageVolume=svi;
-                        break;
-                    }
-                }
-                if (mPrimaryStorageVolume!=null) {
-                    requestInternalStoragePermission();
-                } else {
-                    NotifyEvent ntfy_not_found=new NotifyEvent(mContext);
-                    ntfy_not_found.setListener(new NotifyEventListener() {
-                        @Override
-                        public void positiveResponse(Context context, Object[] objects) {
-                            finish();
-                        }
-                        @Override
-                        public void negativeResponse(Context context, Object[] objects) {}
-                    });
-                    mCommonDlg.showCommonDialog(true, "W",
-                            mContext.getString(R.string.msgs_main_permission_internal_storage_title),
-                            mContext.getString(R.string.msgs_main_permission_internal_storage_not_found_msg), ntfy_not_found);
-                }
-            } else {
-                showFileSelectDialog();
-            }
-        } else {
-            showFileSelectDialog();
-        }
-
-    };
+//    private void checkInternalStoragePermissions() {
+//        if (Build.VERSION.SDK_INT>=SCOPED_STORAGE_SDK) {
+//            ArrayList<SafStorage3>sl= mGp.safMgr.getSafStorageList();
+//            if (sl.size()==0) {
+//                ArrayList<SafManager3.StorageVolumeInfo>vol_list=SafManager3.getStorageVolumeInfo(mContext);
+//                SafManager3.StorageVolumeInfo primary_svid_temp=null;
+//                for(SafManager3.StorageVolumeInfo svi:vol_list) {
+//                    if (svi.uuid.equals(SafFile3.SAF_FILE_PRIMARY_UUID)) {
+//                        mPrimaryStorageVolume=svi;
+//                        break;
+//                    }
+//                }
+//                if (mPrimaryStorageVolume!=null) {
+//                    requestInternalStoragePermission();
+//                } else {
+//                    NotifyEvent ntfy_not_found=new NotifyEvent(mContext);
+//                    ntfy_not_found.setListener(new NotifyEventListener() {
+//                        @Override
+//                        public void positiveResponse(Context context, Object[] objects) {
+//                            finish();
+//                        }
+//                        @Override
+//                        public void negativeResponse(Context context, Object[] objects) {}
+//                    });
+//                    mCommonDlg.showCommonDialog(true, "W",
+//                            mContext.getString(R.string.msgs_main_permission_internal_storage_title),
+//                            mContext.getString(R.string.msgs_main_permission_internal_storage_not_found_msg), ntfy_not_found);
+//                }
+//            } else {
+//                showFileSelectDialog();
+//            }
+//        } else {
+//            showFileSelectDialog();
+//        }
+//
+//    };
 
 	private void requestInternalStoragePermission() {
         NotifyEvent ntfy_term=new NotifyEvent(mContext);
@@ -998,7 +997,7 @@ public class MainActivity extends AppCompatActivity {
     private final int REQUEST_PERMISSIONS_WRITE_EXTERNAL_STORAGE=1;
     @SuppressLint("NewApi")
     private boolean checkLegacyStoragePermissions(final NotifyEvent p_ntfy) {
-        if (Build.VERSION.SDK_INT>=23 && Build.VERSION.SDK_INT<=29) {
+        if (Build.VERSION.SDK_INT>=23 && Build.VERSION.SDK_INT<=30) {
             log.debug("Prermission WriteExternalStorage="+checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)+
                     ", WakeLock="+checkSelfPermission(Manifest.permission.WAKE_LOCK));
             if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
