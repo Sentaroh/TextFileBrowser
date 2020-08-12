@@ -89,14 +89,8 @@ class FileViewerAdapter extends BaseAdapter{
 	private int line_no_width=0;
 	
 	private int search_found_line_no=-1;
-//	private String pre_string="\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0";
-	
+
 	private Paint text_paint=null;
-	
-//	private CommonParms mCparms=new CommonParms();
-//	
-//	class CommonParms {
-//	}
 	
 	private ThemeColorList mThemeColorList;
 
@@ -180,8 +174,6 @@ class FileViewerAdapter extends BaseAdapter{
 	final public String[] getItem(int i) {
 //		b_time=System.currentTimeMillis();
 		String[] line=fcReader.fetchLine(browse_mode,i);
-//		Log.v("","line no="+i+", elapsed time="+(System.currentTimeMillis()-b_time));
-//		Log.v("","line="+line);
 		return line;
 	}
 
@@ -223,27 +215,13 @@ class FileViewerAdapter extends BaseAdapter{
     	if (browse_mode==TEXT_BROWSER_BROWSE_MODE_CHAR && view_line_break==CustomTextView.LINE_BREAK_NOTHING) {
 //            log.trace("before h_pos="+view_horizontal_pos+", nc="+view_show_number_of_char+", max="+view_max_string_length+", incr="+incr);
             view_show_number_of_char=calNumberOfChar();
-
-//            if ((view_horizontal_pos+view_show_number_of_char)<(view_max_string_length)) {
-//                if ((view_horizontal_pos+incr+view_show_number_of_char)<view_max_string_length) {
-//                    view_horizontal_pos+=incr;
-//                } else {
-//                    view_horizontal_pos=view_max_string_length-view_show_number_of_char+2;
-//                }
-//            } else {
-//                view_horizontal_pos=view_max_string_length-view_show_number_of_char+2;
-//            }
-
     		if ((view_horizontal_pos+view_show_number_of_char) <= view_max_string_length) {
     			if ((view_horizontal_pos+incr+view_show_number_of_char) <=view_max_string_length) {
         			view_horizontal_pos+=incr;
     			} else {
-//        			view_horizontal_pos=view_max_string_length-view_show_number_of_char+2;
                     view_horizontal_pos=(view_max_string_length-view_show_number_of_char)+1;
                     if (view_show_lineno) view_horizontal_pos++;
     			}
-//    		} else {
-//                view_horizontal_pos=view_max_string_length-view_show_number_of_char+2;
     		}
             log.trace("incrementHorizontalPosition h_pos="+view_horizontal_pos+", nc="+view_show_number_of_char+", max="+view_max_string_length+", incr="+incr);
     	}
@@ -358,7 +336,6 @@ class FileViewerAdapter extends BaseAdapter{
 	@Override
 	final public View getView(final int position, View convertView, final ViewGroup parent) {
 		final ViewHolder holder;
-//		Log.v("","count="+getCount()+", pos="+position);
         String[] line = getItem(position);
         if (line!=null && line[0]!=null) {
             line[0]=line[0].replaceAll("\r", "").replaceAll("\\p{C}", "?");//Remove unprintable character
@@ -428,8 +405,6 @@ class FileViewerAdapter extends BaseAdapter{
             		float rp=paint.measureText(mt);
             		int width=resources.getDisplayMetrics().widthPixels;
             		float scale=((float)width)/rp;
-//            		if (Build.VERSION.SDK_INT==21 && api21_font_size_calcuration) resize_text_size=(cts*scale*1.5f);
-//            		else resize_text_size=(cts*scale);
             		resize_text_size=(cts*scale);
            			log.debug("Text resize parameter, " +
             					"id="+sa[0]+", Required pixecel="+rp+
@@ -487,8 +462,6 @@ class FileViewerAdapter extends BaseAdapter{
            		
            		if (search_found_line_no!=-1) {
            		    if ((position)==search_found_line_no) {
-//                        if (!mGp.settingUseNoWordWrapTextView || view_line_break==CustomTextView.LINE_BREAK_NOTHING) {
-//                        }
                         if (mUseLightTheme) {
                             holder.ll_char1.setBackgroundColor(Color.GRAY);
                             holder.cv_text.setBackgroundColor(Color.GRAY);
@@ -510,17 +483,13 @@ class FileViewerAdapter extends BaseAdapter{
                         holder.tv_nowrap.setTextColor(mPrimaryTextColor.getDefaultColor());
            			}
            		} else {
-//                    holder.cv_text.setBackgroundColor(Color.BLACK);
                     holder.ll_char1.setBackgroundDrawable(default_bkgrnd);
        				holder.cv_text.setTextColor(mPrimaryTextColor.getDefaultColor());
                     holder.tv_line.setTextColor(mPrimaryTextColor.getDefaultColor());
                     holder.tv_nowrap.setTextColor(mPrimaryTextColor.getDefaultColor());
            		}
         	} else {
-//        		holder.ll_hex1.setVisibility(View.VISIBLE);
-//        		holder.ll_char1.setVisibility(View.GONE);
         		holder.ll_hex1.setSelected(false);
-//        		holder.ll_hex1.setBackgroundColor(Color.BLACK);
         		holder.tv_hex1.setText(line[0].substring(0,23));
         		holder.tv_hex2.setText(line[0].substring(24,47));
         		holder.tv_char1.setText(line[1].substring(0,8));
@@ -558,9 +527,7 @@ class FileViewerAdapter extends BaseAdapter{
 	       	        	if (browse_mode==TEXT_BROWSER_BROWSE_MODE_CHAR) holder.ll_char1.setSelected(true);
 	       	        	else holder.ll_hex1.setSelected(true);
                     } else {
-//                        holder.cv_text.setBackgroundColor(mThemeColorList.text_background_color);
                         holder.cv_text.setBackgroundDrawable(default_bkgrnd);
-//                        holder.tv_nowrap.setBackgroundColor(mThemeColorList.text_background_color);
                         holder.tv_nowrap.setBackgroundDrawable(default_bkgrnd);
                         holder.ll_hex1.setBackgroundColor(mThemeColorList.text_background_color);
            			}
@@ -578,9 +545,7 @@ class FileViewerAdapter extends BaseAdapter{
        				if (browse_mode==TEXT_BROWSER_BROWSE_MODE_CHAR) holder.ll_char1.setSelected(true);
    	        		else holder.ll_hex1.setSelected(true);
        			} else {
-//                    holder.cv_text.setBackgroundColor(mThemeColorList.text_background_color);
                     holder.cv_text.setBackgroundDrawable(default_bkgrnd);
-//                    holder.tv_nowrap.setBackgroundColor(mThemeColorList.text_background_color);
                     holder.tv_nowrap.setBackgroundDrawable(default_bkgrnd);
                     holder.ll_hex1.setBackgroundColor(mThemeColorList.text_background_color);
        			}

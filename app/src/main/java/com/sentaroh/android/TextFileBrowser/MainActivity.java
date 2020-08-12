@@ -179,19 +179,6 @@ public class MainActivity extends AppCompatActivity {
 	};
 
 
-//    private static String getIdFromUri(Uri uri) {
-//        String f_path=uri.getPath();
-//        String f_name=f_path.substring(f_path.lastIndexOf("/")+1);
-//        String id="";
-//        if (f_name.lastIndexOf(":")>=0) {
-//            id=f_name.substring(0,f_name.indexOf(":")-1);
-//        } else {
-//            id=f_name;
-//        }
-////        Log.v("","path="+f_path+", name="+f_name+", id="+id);
-//        return id;
-//    }
-
     private void initViewWidget() {
         getWindow().setSoftInputMode(
         WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -241,35 +228,12 @@ public class MainActivity extends AppCompatActivity {
 
         MyUncaughtExceptionHandler myUncaughtExceptionHandler = new MyUncaughtExceptionHandler();
         myUncaughtExceptionHandler.init(mContext, myUncaughtExceptionHandler);
-//        String npe=null;
-//        npe.length();
-
-//		if (Build.VERSION.SDK_INT>=14) getActionBar().setHomeButtonEnabled(false);
 
         mCommonDlg=new CommonDialog(mActivity, mFragmentManager);
 
         initViewWidget();
 
         cleanupCacheFile();
-
-//        SortedMap<String, Charset> ac=Charset.availableCharsets();
-//        Set<String> ks=ac.keySet();
-//        Object[] ka=ks.toArray();
-//        Log.v("","ka="+ka.length);
-//        for (int i=0;i<ka.length;i++) {
-//        	Log.v("","i="+i+", k="+ka[i]);
-//        }
-
-
-//        File lf=new File("/storage/emulated/0/test.txt");
-//        try {
-//            boolean cr=lf.createNewFile();
-//            Log.v(APPLICATION_TAG,"date="+lf.lastModified()+", curr="+System.currentTimeMillis());
-//            boolean lm=lf.setLastModified(System.currentTimeMillis());
-//            Log.v(APPLICATION_TAG,"Create="+cr+", set="+lm);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
 
     };
 
@@ -300,8 +264,6 @@ public class MainActivity extends AppCompatActivity {
 	public void onResume() {
 		super.onResume();
 		log.debug("onResume entered, restartStatus="+mRestartStatus);
-//        String npe=null;
-//        npe.length();
 		if (mRestartStatus==0) {
 	    	Intent in=getIntent();
             if (in==null || in.getData()==null) {
@@ -310,10 +272,6 @@ public class MainActivity extends AppCompatActivity {
 		    	ntfy.setListener(new NotifyEventListener() {
                     @Override
                     public void positiveResponse(Context context, Object[] objects) {
-//                        if (Build.VERSION.SDK_INT>=SCOPED_STORAGE_SDK) {
-//                            checkInternalStoragePermissions();
-//                        } else {
-//                        }
                         showFileSelectDialog();
                     }
                     @Override
@@ -434,10 +392,8 @@ public class MainActivity extends AppCompatActivity {
 
 	private boolean isTextMimeTypex(String mime_type) {
 	    boolean result=false;
-//        log.info("mime_type="+mime_type+", option="+mGp.settingMimeTypeToOpenAsText);
 	    String[] mt_array=mGp.settingMimeTypeToOpenAsText.split(";");
 	    for(String item:mt_array) {
-//	        log.info("item="+item);
 	        if (item.equals("*")) {
                 result=true;
                 break;
@@ -447,7 +403,6 @@ public class MainActivity extends AppCompatActivity {
                     Pattern pattern=Pattern.compile("^"+reg_exp);
                     Matcher matcher=pattern.matcher(mime_type);
                     boolean matched=matcher.find();
-//                    log.info("reg_exp="+reg_exp+", pattern="+pattern+", match="+matched);
                     if (matched) {
                         result=true;
                         break;
@@ -455,7 +410,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-//        log.info("result=="+result);
         log.debug("isTextMimeType result="+result+", MimeType="+mime_type);
 	    return result;
     }
@@ -942,43 +896,6 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	private SafManager3.StorageVolumeInfo mPrimaryStorageVolume=null;
-//    private void checkInternalStoragePermissions() {
-//        if (Build.VERSION.SDK_INT>=SCOPED_STORAGE_SDK) {
-//            ArrayList<SafStorage3>sl= mGp.safMgr.getSafStorageList();
-//            if (sl.size()==0) {
-//                ArrayList<SafManager3.StorageVolumeInfo>vol_list=SafManager3.getStorageVolumeInfo(mContext);
-//                SafManager3.StorageVolumeInfo primary_svid_temp=null;
-//                for(SafManager3.StorageVolumeInfo svi:vol_list) {
-//                    if (svi.uuid.equals(SafFile3.SAF_FILE_PRIMARY_UUID)) {
-//                        mPrimaryStorageVolume=svi;
-//                        break;
-//                    }
-//                }
-//                if (mPrimaryStorageVolume!=null) {
-//                    requestInternalStoragePermission();
-//                } else {
-//                    NotifyEvent ntfy_not_found=new NotifyEvent(mContext);
-//                    ntfy_not_found.setListener(new NotifyEventListener() {
-//                        @Override
-//                        public void positiveResponse(Context context, Object[] objects) {
-//                            finish();
-//                        }
-//                        @Override
-//                        public void negativeResponse(Context context, Object[] objects) {}
-//                    });
-//                    mCommonDlg.showCommonDialog(true, "W",
-//                            mContext.getString(R.string.msgs_main_permission_internal_storage_title),
-//                            mContext.getString(R.string.msgs_main_permission_internal_storage_not_found_msg), ntfy_not_found);
-//                }
-//            } else {
-//                showFileSelectDialog();
-//            }
-//        } else {
-//            showFileSelectDialog();
-//        }
-//
-//    };
-
 	private void requestInternalStoragePermission() {
         NotifyEvent ntfy_term=new NotifyEvent(mContext);
         ntfy_term.setListener(new NotifyEventListener(){
@@ -1202,9 +1119,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void positiveResponse(Context c, Object[] o) {
                 Uri uri=((Uri)o[0]);
-//                String npe=null;
-//                npe.length();
-//                UriFileInfo uri_file_info=ContentProviderUtil.getUriFileInfo(mContext, ((Uri)o[0]), null, Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 SafFile3 in_file=new SafFile3(mContext, uri);
                 if (in_file.exists()) {
                     String fid = null;
@@ -1221,7 +1135,6 @@ public class MainActivity extends AppCompatActivity {
                             else if ((fid.equals("m3u") || fid.equals("m3u8"))) mt="application/vnd.apple.mpegurl";
                         }
                     }
-//                    if (mt!=null) uri_file_info.mime_type=mt;
 
                     if (!isFileAlreadyViewed(in_file)) {
                         addFileToViewedFileList(true, in_file);
@@ -1260,7 +1173,6 @@ public class MainActivity extends AppCompatActivity {
                     finish();
                 }
                 mFileSelectorDialogFragment=null;
-//				finish();
             }
         });
         if (mFileSelectorDialogFragment==null) {
@@ -1314,8 +1226,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void negativeResponse(Context context, Object[] objects) {
-//                if (Build.VERSION.SDK_INT>29) finish();
-//                else showFileSelectDialog();
             }
         });
         StoragePermission sp=new StoragePermission(mActivity, mGp.safMgr, mCommonDlg, ntfy_request);
