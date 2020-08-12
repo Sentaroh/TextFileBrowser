@@ -168,15 +168,15 @@ public class FileViewerFragment extends Fragment {
         }
     }
 
+    private static final String SAVE_KEY_URI="input_uri";
 	@Override
 	public void onSaveInstanceState(Bundle outState) {  
 		super.onSaveInstanceState(outState);
 		log.debug("onSaveInstanceState entered");
-		saveViewAttributes();
-//		saveTaskData();
-	};  
+		outState.putString(SAVE_KEY_URI, mInputFile.getUri().toString());
+	};
 
-	private void saveViewAttributes() {
+    private void saveViewAttributes() {
 		log.debug("saveViewAttributes entered");
 		if (mMainActivity.isApplicationTerminating()) return;
 		mLastMsgText=mMainViewMsgArea.getText().toString();
@@ -229,6 +229,10 @@ public class FileViewerFragment extends Fragment {
         mFragmentManager=getFragmentManager();
         mRestartStatus=0;
 
+        if (savedInstanceState!=null) {
+            String uri=savedInstanceState.getString(SAVE_KEY_URI,"");
+            if (!uri.equals("")) mInputFile=new SafFile3(mContext, uri);
+        }
         String path=mInputFile.getPath();
         for (ViewedFileListItem item: mGp.viewedFileList) {
             if (item.viewd_file.getPath().equals(path)) {
@@ -236,12 +240,6 @@ public class FileViewerFragment extends Fragment {
                 break;
             }
         }
-
-//        try {
-//            InputStream is=mMainUriFile.getInputStream();
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
 
         if (mMainUriFile!=null) initViewWidget();
 	};

@@ -111,62 +111,64 @@ public class MainActivity extends AppCompatActivity {
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		log.debug("onSaveInstanceState entered");
-		
-		saveViewContents(outState);
-	};  
-
-	private void saveViewContents(Bundle outState) {
-		outState.putInt("SpinnerPos",mViewedFileListSpinner.getSelectedItemPosition());
-		outState.putInt("FAH_Size", mGp.viewedFileList.size());
-		try {
-			ByteArrayOutputStream bos=new ByteArrayOutputStream(1024*32);
-			ObjectOutputStream oos=new ObjectOutputStream(bos);
-			
-			for (int i = 0; i< mGp.viewedFileList.size(); i++) {
-				ViewedFileListItem vfli= mGp.viewedFileList.get(i);
-				vfli.writeExternal(oos);
-			}
-			oos.flush();
-			byte[] buf=bos.toByteArray();
-			outState.putByteArray("FAH_List", buf);
-			oos.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+        saveViewContents(outState);
 	};
-	
-	@Override  
+
+	@Override
 	protected void onRestoreInstanceState(Bundle savedState) {  
 		super.onRestoreInstanceState(savedState);
 		log.debug("onRestoreInstanceState entered");
-		restoreViewContents(savedState);
 		mRestartStatus=2;
+        restoreViewContents(savedState);
 	};
 
-	private void restoreViewContents(Bundle savedState) {
-		mSavedViewedFileListSpinnerPosition=savedState.getInt("SpinnerPos");
-		byte[] buf=savedState.getByteArray("FAH_List");
-		int list_size=savedState.getInt("FAH_Size");
-		try {
-			ByteArrayInputStream bis=new ByteArrayInputStream(buf);
-			ObjectInputStream ois=new ObjectInputStream(bis);
-			mGp.viewedFileList=new ArrayList<ViewedFileListItem>();
-			for (int i=0;i<list_size;i++) {
-				ViewedFileListItem vfli=new ViewedFileListItem();
-				vfli.readExternal(ois);
+	final static String SAVE_KEY_SPINNER_POS="SpinnerPos";
+    final static String SAVE_KEY_VFL_SIZE="FAH_Size";
+    final static String SAVE_KEY_VFL_LIST="FAH_List";
+    private void saveViewContents(Bundle outState) {
+        outState.putInt(SAVE_KEY_SPINNER_POS,mViewedFileListSpinner.getSelectedItemPosition());
+        outState.putInt(SAVE_KEY_VFL_SIZE, mGp.viewedFileList.size());
+        try {
+            ByteArrayOutputStream bos=new ByteArrayOutputStream(1024*32);
+            ObjectOutputStream oos=new ObjectOutputStream(bos);
+
+            for (int i = 0; i< mGp.viewedFileList.size(); i++) {
+                ViewedFileListItem vfli= mGp.viewedFileList.get(i);
+                vfli.writeExternal(oos);
+            }
+            oos.flush();
+            byte[] buf=bos.toByteArray();
+            outState.putByteArray(SAVE_KEY_VFL_LIST, buf);
+            oos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    };
+
+    private void restoreViewContents(Bundle savedState) {
+        mSavedViewedFileListSpinnerPosition=savedState.getInt(SAVE_KEY_SPINNER_POS);
+        byte[] buf=savedState.getByteArray(SAVE_KEY_VFL_LIST);
+        int list_size=savedState.getInt(SAVE_KEY_VFL_SIZE);
+        try {
+            ByteArrayInputStream bis=new ByteArrayInputStream(buf);
+            ObjectInputStream ois=new ObjectInputStream(bis);
+            mGp.viewedFileList=new ArrayList<ViewedFileListItem>();
+            for (int i=0;i<list_size;i++) {
+                ViewedFileListItem vfli=new ViewedFileListItem();
+                vfli.readExternal(ois);
                 if (vfli.viewed_file_uri_string!=null) vfli.viewd_file=new SafFile3(mContext, Uri.parse(vfli.viewed_file_uri_string));
-				mGp.viewedFileList.add(vfli);
-			}
-			
-			ois.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	@Override
+                mGp.viewedFileList.add(vfli);
+            }
+
+            ois.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
 		log.debug("onNewIntent entered, restartStatus="+mRestartStatus);
@@ -178,51 +180,22 @@ public class MainActivity extends AppCompatActivity {
 		}
 	};
 
-
-    private void initViewWidget() {
-        getWindow().setSoftInputMode(
-        WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-        setContentView(R.layout.text_browser_activity);
-
-        if (mGp.viewedFileList==null)
-        	mGp.viewedFileList=new ArrayList<ViewedFileListItem>();
-
-        initFileSelectionSpinner();
-	};
-	
-	private void initFileSelectionSpinner() {
-		mViewedFileListSpinner=(Spinner)findViewById(R.id.text_browser_activity_file_view_selector);
-		setSpinnerBackground(mActivity, mViewedFileListSpinner, ThemeUtil.isLightThemeUsed(mActivity));
-		mViewedFileListAdapter=new ViewedFileListAdapter(this, android.R.layout.simple_spinner_item, mGp.viewedFileList);
-//		mViewedFileListAdapter.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
-//        mViewedFileListAdapter.setDropDownViewResource(android.R.layout.simple_list_item_single_choice);
-        mViewedFileListAdapter.setDropDownViewResource(R.layout.viewed_file_list_item);
-        mViewedFileListSpinner.setPrompt(mContext.getString(R.string.msgs_text_browser_select_view_file));
-        mViewedFileListSpinner.setAdapter(mViewedFileListAdapter);
-	};
-
-    public static void setSpinnerBackground(Context c, Spinner spinner, boolean theme_is_light) {
-        if (theme_is_light) {
-            spinner.setBackground(c.getDrawable(R.drawable.spinner_color_background_light));
-        } else {
-            spinner.setBackground(c.getDrawable(R.drawable.spinner_color_background));
-        }
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
 //        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
 //        StrictMode.setVmPolicy(builder.build());
 
-        mContext=MainActivity.this.getApplicationContext();
+        mContext=MainActivity.this;
         mActivity=MainActivity.this;
         mFragmentManager=getSupportFragmentManager();
         mRestartStatus=0;
         mGp =GlobalWorkArea.getGlobalParameters(mActivity);
-        if (mGp.commonNotification==null)
-        	mGp.commonNotification=new NotificationCommonParms();
+        if (mGp.commonNotification==null) mGp.commonNotification=new NotificationCommonParms();
         setTheme(mGp.screenTheme);
         super.onCreate(savedInstanceState);
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        setContentView(R.layout.text_browser_activity);
 
         log.debug("onCreate entered, SDK="+ Build.VERSION.SDK_INT+", Appl="+getApplVersionName());
 
@@ -231,11 +204,31 @@ public class MainActivity extends AppCompatActivity {
 
         mCommonDlg=new CommonDialog(mActivity, mFragmentManager);
 
-        initViewWidget();
+        if (mGp.viewedFileList==null) mGp.viewedFileList=new ArrayList<ViewedFileListItem>();
+        initFileSelectionSpinner();
 
         cleanupCacheFile();
 
     };
+
+    private void initFileSelectionSpinner() {
+        mViewedFileListSpinner=(Spinner)findViewById(R.id.text_browser_activity_file_view_selector);
+        setSpinnerBackground(mActivity, mViewedFileListSpinner, ThemeUtil.isLightThemeUsed(mActivity));
+        mViewedFileListAdapter=new ViewedFileListAdapter(this, android.R.layout.simple_spinner_item, mGp.viewedFileList);
+//		mViewedFileListAdapter.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
+//        mViewedFileListAdapter.setDropDownViewResource(android.R.layout.simple_list_item_single_choice);
+        mViewedFileListAdapter.setDropDownViewResource(R.layout.viewed_file_list_item);
+        mViewedFileListSpinner.setPrompt(mContext.getString(R.string.msgs_text_browser_select_view_file));
+        mViewedFileListSpinner.setAdapter(mViewedFileListAdapter);
+    };
+
+    public static void setSpinnerBackground(Context c, Spinner spinner, boolean theme_is_light) {
+        if (theme_is_light) {
+            spinner.setBackground(c.getDrawable(R.drawable.spinner_color_background_light));
+        } else {
+            spinner.setBackground(c.getDrawable(R.drawable.spinner_color_background));
+        }
+    }
 
     private class MyUncaughtExceptionHandler extends AppUncaughtExceptionHandler {
         @Override
@@ -283,43 +276,40 @@ public class MainActivity extends AppCompatActivity {
                 prepareShowFile(in);
 			}
 		} else if (mRestartStatus==1) {
-		} else if (mRestartStatus==2) {
-	    	NotificationUtil.initNotification(mContext, mGp.commonNotification);
-			for (int i = 0; i< mGp.viewedFileList.size(); i++) {
-				ViewedFileListItem vfli= mGp.viewedFileList.get(i);
-				
-				vfli.viewerParmsInitRequired=false;
-				vfli.viewerParmsRestoreRequired=true;
-				vfli.encodeName="";
-				
-				vfli.file_view_fragment=FileViewerFragment.newInstance();
+        } else if (mRestartStatus==2) {
+            NotificationUtil.initNotification(mContext, mGp.commonNotification);
+            for (int i = 0; i< mGp.viewedFileList.size(); i++) {
+                ViewedFileListItem vfli= mGp.viewedFileList.get(i);
+
+                vfli.viewerParmsInitRequired=false;
+                vfli.viewerParmsRestoreRequired=true;
+                vfli.encodeName="";
+
+                vfli.file_view_fragment=FileViewerFragment.newInstance();
                 vfli.file_view_fragment.setFileViewerParameter(vfli.viewd_file);
 
-				vfli.tc_view=new ThreadCtrl();
-		        vfli.ix_reader_view=new IndexedFileReader(mContext, mCommonDlg,
-		        		vfli.tc_view,
-//		        		mGp.settingEncodeName,
-		        		mGp.settingDefaultEncodeName,
-		        		mGp.settingIndexCache,
-		        		mGp.settingBufferCharIndexSize,
-		        		mGp.settingBufferHexIndexSize,
-		        		mGp.settingBufferPoolSize,
-		        		mActivity);
+                vfli.tc_view=new ThreadCtrl();
+                vfli.ix_reader_view=new IndexedFileReader(mContext, mCommonDlg,
+                        vfli.tc_view,
+                        mGp.settingDefaultEncodeName,
+                        mGp.settingIndexCache,
+                        mGp.settingBufferCharIndexSize,
+                        mGp.settingBufferHexIndexSize,
+                        mGp.settingBufferPoolSize,
+                        mActivity);
 //				mViewedFileListAdapter.notifyDataSetChanged();
-				if (i==mSavedViewedFileListSpinnerPosition)
-					mGp.currentViewedFile=vfli.viewd_file;
-			}
-			initFileSelectionSpinner();
+                if (i==mSavedViewedFileListSpinnerPosition)
+                    mGp.currentViewedFile=vfli.viewd_file;
+            }
+            initFileSelectionSpinner();
 
-			mCommonDlg.showCommonDialog(false, "W",  
-					getString(R.string.msgs_tb_application_restarted),"",null);
+            mCommonDlg.showCommonDialog(false, "W", getString(R.string.msgs_tb_application_restarted),"",null);
 
-	    	showFileByViewedFileList(mGp.currentViewedFile);
+            showFileByViewedFileList(mGp.currentViewedFile);
 
-//	    	NotificationUtil.showOngoingNotificationMsg(mContext, mGp.commonNotification, mGp.currentViewedFile);
-	    	mViewedFileListSpinner.setSelection(mSavedViewedFileListSpinnerPosition);
-	    	
-		}
+            mViewedFileListSpinner.setSelection(mSavedViewedFileListSpinnerPosition);
+
+        }
 		mRestartStatus=1;
 
         setViewedFilleSelectorListener();

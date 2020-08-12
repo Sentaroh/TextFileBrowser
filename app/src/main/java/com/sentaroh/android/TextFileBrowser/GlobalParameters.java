@@ -166,6 +166,9 @@ public class GlobalParameters {
             prefs.edit().putString(c.getString(R.string.settings_tb_tab_stop),DEFAULT_TAB_STOP).commit();
         }
 
+        if (!prefs.contains(c.getString(R.string.settings_tb_use_no_word_wrap_text_view))) {
+            prefs.edit().putBoolean(c.getString(R.string.settings_tb_use_no_word_wrap_text_view), true).commit();
+        }
     }
     
     public void loadSettingParms(Context c) {
@@ -203,7 +206,7 @@ public class GlobalParameters {
         settingShowAllFileAsText=prefs.getBoolean(c.getString(R.string.settings_tb_show_all_file_as_text), false);
         settingMimeTypeToOpenAsText=prefs.getString(c.getString(R.string.settings_tb_mime_type_to_open_text_mode), TEXT_MODE_MIME_TYPE);
 
-        settingUseNoWordWrapTextView=prefs.getBoolean(c.getString(R.string.settings_tb_use_no_word_wrap_text_view), false);
+        settingUseNoWordWrapTextView=prefs.getBoolean(c.getString(R.string.settings_tb_use_no_word_wrap_text_view), true);
 //        if (debugEnabled) log.debug("Init Setting parms: "+
 //                "Line break="+ settingLineBreak+
 //                ", Font family="+ settingFontFamily+

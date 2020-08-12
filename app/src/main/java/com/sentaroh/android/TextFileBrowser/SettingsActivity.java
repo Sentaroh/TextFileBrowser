@@ -449,7 +449,7 @@ public class SettingsActivity extends PreferenceActivity{
             } else if (key_string.equals(mContext.getString(R.string.settings_tb_confirm_exit))) {
                 log.debug("checkSettings entered, key="+key_string+", value="+shared_pref.getBoolean(key_string, false));
             } else if (key_string.equals(mContext.getString(R.string.settings_tb_use_no_word_wrap_text_view))) {
-                log.debug("checkSettings entered, key="+key_string+", value="+shared_pref.getBoolean(key_string, false));
+                log.debug("checkSettings entered, key="+key_string+", value="+shared_pref.getBoolean(key_string, true));
             }
 
         }
