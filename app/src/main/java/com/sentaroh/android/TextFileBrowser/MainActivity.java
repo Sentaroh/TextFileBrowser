@@ -687,10 +687,13 @@ public class MainActivity extends AppCompatActivity {
 				CommonDialog.setMenuItemEnabled(mActivity, menu, menu.findItem(R.id.menu_tb_about), true);
 			}
 			if (!vf.viewd_file.exists()) {
-                CommonDialog.setMenuItemEnabled(mActivity, menu, menu.findItem(R.id.menu_tb_mode_swicth), false);
-                CommonDialog.setMenuItemEnabled(mActivity, menu, menu.findItem(R.id.menu_tb_find), false);
+                menu.findItem(R.id.menu_tb_mode_swicth).setVisible(false);
+                menu.findItem(R.id.menu_tb_find).setVisible(false);
             }
-		}
+		} else {
+            menu.findItem(R.id.menu_tb_mode_swicth).setVisible(false);
+            menu.findItem(R.id.menu_tb_find).setVisible(false);
+        }
 
 		if (mGp.isLogFileExists()) CommonDialog.setMenuItemEnabled(mActivity, menu, menu.findItem(R.id.menu_tb_send_log), true);
 		else CommonDialog.setMenuItemEnabled(mActivity, menu, menu.findItem(R.id.menu_tb_send_log), false);
