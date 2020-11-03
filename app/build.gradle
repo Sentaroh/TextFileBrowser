@@ -8,8 +8,8 @@ android {
         minSdkVersion 23
         targetSdkVersion 29
 
-        versionCode 125
-        versionName "1.74"
+        versionCode 126
+        versionName "1.75"
 
     }
 
@@ -65,8 +65,8 @@ android {
                         def versionNumber = variant.versionCode.toString()
                         def mod_name = "${rootProject.name}"
                         def fileExtension= outputFileName.toString().substring(outputFileName.toString().lastIndexOf(".")+1)
-                        def newName = "${mod_name}_${versionName}_${versionNumber}_release.apk"
-                        outputFileName = "../../release/"+newName
+                        def newName = "${mod_name}_${versionName}_${versionNumber}_release.${fileExtension}"
+                        outputFileName = newName
                     }
                 }
             }

@@ -9,5 +9,10 @@ Textファイルを文字列または16進で表示するアプリケーショ�
 -ファイルサイズの上限は1GBです。読込はSony Xperia Acroでの実測値:3MB/秒程度です。\n
 \n
 External Library: juniversalchardet 1.0.3</string>
-	
+
+    <string name="msgs_dlg_title_privacy_policy">プライバシーポリシー</string>
+    <string name="msgs_dlg_privacy_policy_html">TextFileBrowser_Privacy_JA.htm</string>
+
+    <string name="msgs_tb_menu_privacy_policy">プライバシーポリシー</string>
+
 </resources>

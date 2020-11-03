@@ -9,5 +9,10 @@ It is an application that displays text files.\n
 -Maximum file size is 1GB. Read the measured value in the Sony Xperia Acro: is 3MB/seconds.\n
 \n
 External Library: juniversalchardet 1.0.3</string>
-	
+
+    <string name="msgs_dlg_title_privacy_policy">Privacy policy</string>
+    <string name="msgs_dlg_privacy_policy_html">TextFileBrowser_Privacy_EN.htm</string>
+
+    <string name="msgs_tb_menu_privacy_policy">Privacy policy</string>
+
 </resources>

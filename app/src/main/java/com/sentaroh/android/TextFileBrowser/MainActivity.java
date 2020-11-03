@@ -26,7 +26,9 @@ OTHER DEALINGS IN THE SOFTWARE.
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -36,23 +38,30 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.storage.StorageManager;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.MimeTypeMap;
+import android.webkit.WebView;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager.widget.ViewPager;
 
-import com.sentaroh.android.TextFileBrowser.BuildConfig;
 
 import com.sentaroh.android.Utilities3.AppUncaughtExceptionHandler;
+import com.sentaroh.android.Utilities3.BuildConfig;
 import com.sentaroh.android.Utilities3.Dialog.CommonDialog;
 import com.sentaroh.android.Utilities3.Dialog.CommonFileSelector2;
 import com.sentaroh.android.Utilities3.Dialog.MessageDialogFragment;
@@ -64,6 +73,7 @@ import com.sentaroh.android.Utilities3.NotifyEvent.NotifyEventListener;
 import com.sentaroh.android.Utilities3.SafFile3;
 import com.sentaroh.android.Utilities3.SafManager3;
 import com.sentaroh.android.Utilities3.SafStorage3;
+import com.sentaroh.android.Utilities3.SystemInfo;
 import com.sentaroh.android.Utilities3.ThemeUtil;
 import com.sentaroh.android.Utilities3.ThreadCtrl;
 import com.sentaroh.android.Utilities3.Zip.ZipUtil;
@@ -208,7 +218,6 @@ public class MainActivity extends AppCompatActivity {
         initFileSelectionSpinner();
 
         cleanupCacheFile();
-
     };
 
     private void initFileSelectionSpinner() {
@@ -726,6 +735,8 @@ public class MainActivity extends AppCompatActivity {
             requestStoragePermissions(REQUEST_CODE_EXTERNAL_STORAGE_ACCESS_PERMISSION);
 		} else if (item.getItemId()== R.id.menu_tb_about) {
 			aboutTextFileBrowser();
+        } else if (item.getItemId()== R.id.menu_tb_privacy_policy) {
+            showPrivacyPolicy();
 		} else if (item.getItemId()== R.id.menu_tb_exit) {
 			confirmExit();
         } else if (item.getItemId()== R.id.menu_tb_send_log) {
@@ -850,7 +861,7 @@ public class MainActivity extends AppCompatActivity {
                     intent.setType("application/zip");
                     intent.putExtra(Intent.EXTRA_EMAIL, new String[]{MAIL_TO});
                     intent.putExtra(Intent.EXTRA_SUBJECT, "TextFileBrowser log file");
-                    Uri uri= FileProvider.getUriForFile(mContext, BuildConfig.APPLICATION_ID + ".provider",lf);
+                    Uri uri= FileProvider.getUriForFile(mContext, APPLICATION_ID + ".provider",lf);
                     intent.putExtra(Intent.EXTRA_STREAM, uri);///Uri.fromFile(lf));
                     mActivity.startActivity(intent);
                 } else {
@@ -1295,6 +1306,47 @@ public class MainActivity extends AppCompatActivity {
             result=del_item.delete();
         }
         return result;
+    }
+
+    private void showPrivacyPolicy() {
+        final Dialog dialog = new Dialog(mActivity, mGp.screenTheme);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.privacy_policy_dlg);
+
+        final LinearLayout title_view = (LinearLayout) dialog.findViewById(R.id.privacy_polycy_dlg_title_view);
+        final TextView title = (TextView) dialog.findViewById(R.id.privacy_polycy_dlg_title);
+        title_view.setBackgroundColor(mGp.themeColorList.title_background_color);
+        title.setTextColor(mGp.themeColorList.title_text_color);
+        title.setText(getString(R.string.msgs_dlg_title_privacy_policy));
+
+        final WebView func_view = (WebView) dialog.findViewById(R.id.privacy_polycy_dlg_webview);
+        func_view.loadUrl("file:///android_asset/" + getString(R.string.msgs_dlg_privacy_policy_html));
+        func_view.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
+//        func_view.getSettings().setBuiltInZoomControls(true);
+//        func_view.getSettings().setDisplayZoomControls(true);
+//        func_view.getSettings().setSupportZoom(true);
+//        func_view.getSettings().setBuiltInZoomControls(true);
+//        func_view.getSettings().setTextZoom(zf);
+
+        final Button btnOk = (Button) dialog.findViewById(R.id.privacy_polycy_dlg_close);
+
+        CommonDialog.setDlgBoxSizeLimit(dialog, true);
+
+        // OKボタンの指定
+        btnOk.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        // Cancelリスナーの指定
+        dialog.setOnCancelListener(new Dialog.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface arg0) {
+                btnOk.performClick();
+            }
+        });
+
+        dialog.show();
     }
 
 }

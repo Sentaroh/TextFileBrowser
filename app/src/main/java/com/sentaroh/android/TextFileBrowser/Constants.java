@@ -24,6 +24,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 class Constants {
 	public static final String APPLICATION_TAG="TextFileBrowser";
+    public static final String APPLICATION_ID="com.sentaroh.android."+APPLICATION_TAG;
     public static final String DEFAULT_LINE_BREAK=String.valueOf(CustomTextView.LINE_BREAK_NO_WORD_WRAP);
 	public static final String DEFAULT_FONT_FAMILY="MONOSPACE";
 	public static final String DEFAULT_FONT_STYLE="NORMAL";
