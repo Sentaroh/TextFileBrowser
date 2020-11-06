@@ -117,11 +117,17 @@ public class IndexedFileReader {
 		public StringBuilder sbCharModeText=null;
 		
 		public MainActivity mainActivity=null;
-	}
-	
+
+		public boolean encodingAutoDetectFailed=false;
+        public Handler uiHandler=null;
+
+    }
+
 	private CommonParms cparms=new CommonParms();
 
-	public String getLastErrorMessage() {
+    public boolean isEncodingAutoDetectFailed() {return cparms.encodingAutoDetectFailed;}
+
+    public String getLastErrorMessage() {
 	    return cparms.lastErrorMessage;
     }
 
@@ -168,6 +174,7 @@ public class IndexedFileReader {
                              ThreadCtrl tc,
                              String default_encoding, String cache_option,
 			int ib_char_size, int ib_hex_size, int cp_size, MainActivity ma) {
+        cparms.uiHandler=new Handler();
 		cparms.mainActivity=ma;
 		cparms.context=c;
 		cparms.tcIndexReader=tc;
@@ -1011,6 +1018,13 @@ public class IndexedFileReader {
 			} else {
                 if (t_encode_name==null) {
                     cparms.encodeName=cparms.defaultEncodeName;
+                    cparms.encodingAutoDetectFailed=true;
+                    cparms.uiHandler.post(new Runnable(){
+                        @Override
+                        public void run() {
+                            CommonDialog.showToastLong(cparms.mainActivity, "Auto detect failed, Encoding assumed="+cparms.encodeName);
+                        }
+                    });
                     if (log.isDebugEnabled()) debugMsg("determinCharModeNoOfLine","Auto detect failed, Encoding assumed="+cparms.encodeName);
                 }
             }

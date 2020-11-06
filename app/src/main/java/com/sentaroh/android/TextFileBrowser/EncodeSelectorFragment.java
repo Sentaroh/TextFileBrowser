@@ -63,9 +63,6 @@ public class EncodeSelectorFragment extends DialogFragment {
 
 	private boolean mTerminateSelf=false;
 	
-//	private ViewedFileListItem mViewedFileListItem=null;
-//	private FileViewerFragment mFileViewerFragment=null;
-	
 	private SavedViewValues mSavedViewValues=null;
 
 	private boolean mIsLightThemeUsed=false;
@@ -74,7 +71,6 @@ public class EncodeSelectorFragment extends DialogFragment {
 	private Context mContext=null;
 
 	public static EncodeSelectorFragment newInstance() {
-//		Log.v(APPLICATION_TAG,"newInstance");
 		EncodeSelectorFragment frag = new EncodeSelectorFragment();
         Bundle bundle = new Bundle();
         frag.setArguments(bundle);
@@ -117,7 +113,6 @@ public class EncodeSelectorFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     	if (mGp.debugEnabled) log.debug("onCreateView");
     	View view=super.onCreateView(inflater, container, savedInstanceState);
-//    	CommonDialog.setDlgBoxSizeLimit(mDialog,true);
     	return view;
     }
 
@@ -137,7 +132,6 @@ public class EncodeSelectorFragment extends DialogFragment {
         mIsLightThemeUsed=ThemeUtil.isLightThemeUsed(mContext);
        	if (savedInstanceState!=null) {
             if (savedInstanceState.getBoolean("Restart", false)) {
-//    			Restart occurred, terminate self
                 if (mGp.debugEnabled) log.debug("Application restart is detected, terminate self issued.");
             	mTerminateSelf=true;
             	mFragment.dismiss();
@@ -209,13 +203,10 @@ public class EncodeSelectorFragment extends DialogFragment {
     }
 
 	public void showDialog(FragmentManager fm, Fragment frag) {
-//    	if (mGp.debugEnabled)
-    		log.debug("showDialog");
-//    	mViewedFileListItem=vfli;
+   		log.debug("showDialog");
 	    FragmentTransaction ft = fm.beginTransaction();
 	    ft.add(frag,null);
 	    ft.commitAllowingStateLoss();
-//    	show(fm,APPLICATION_TAG);
     }
 
 	class SavedViewValues {
@@ -250,7 +241,7 @@ public class EncodeSelectorFragment extends DialogFragment {
 		final ListView lv_encode=(ListView)mDialog.findViewById(R.id.encode_name_selection_dlg_listview);
 		//		lv_encode.setBackgroundColor(mGp.themeColorList.window_background_color_content);
 		
-		ArrayList<EncodeListItem>encode_list=new ArrayList<EncodeListItem>();
+		ArrayList<EncodeSelectorAdapter.EncodeListItem>encode_list=new ArrayList<EncodeSelectorAdapter.EncodeListItem>();
 		
 		final String[] tmp_enc_array_list=getResources().getStringArray(R.array.settings_tb_default_encode_name_list_entries);
 		final String[] tmp_enc_array_value=getResources().getStringArray(R.array.settings_tb_default_encode_name_list_values);
@@ -258,26 +249,20 @@ public class EncodeSelectorFragment extends DialogFragment {
         final String[] enc_array_list=new String[tmp_enc_array_list.length+1];
         final String[] enc_array_value=new String[tmp_enc_array_value.length+1];
         enc_array_list[0]=getResources().getString(R.string.settings_tb_encode_name_display_automatic);
-        enc_array_value[0]=getResources().getString(R.string.settings_tb_encode_name_value_automatic);
+        enc_array_value[0]="";
 
         for(int i=0;i<tmp_enc_array_list.length;i++) enc_array_list[i+1]=tmp_enc_array_list[i];
         for(int i=0;i<tmp_enc_array_value.length;i++) enc_array_value[i+1]=tmp_enc_array_value[i];
 
-		EncodeListItem item=new EncodeListItem();
+		EncodeSelectorAdapter.EncodeListItem item=new EncodeSelectorAdapter.EncodeListItem();
 		FragmentManager fm=getActivity().getSupportFragmentManager();
 		final FileViewerFragment fvf=(FileViewerFragment)fm.findFragmentById(R.id.container);
 		if (fvf.getEncodeName().equals("")) item.isChecked=true;
 		item.encode_name=enc_array_list[0];
 		encode_list.add(item);
 		for (int i=1;i<enc_array_list.length;i++) {
-			item=new EncodeListItem();
+			item=new EncodeSelectorAdapter.EncodeListItem();
 			item.encode_name=enc_array_list[i];
-//			byte[] utf_8=ENCODE_NAME_UTF8.getBytes();
-//            byte[] enc=fvf.getEncodeName().getBytes();
-//            byte[] lst=enc_array_list[i].getBytes();
-//            log.info("name="+ENCODE_NAME_UTF8+", enc="+StringUtil.getHexString(utf_8,0,utf_8.length)+
-//                    ", name="+fvf.getEncodeName()+", enc="+StringUtil.getHexString(enc,0,enc.length)+
-//                    ", name="+enc_array_list[i]+", lst="+StringUtil.getHexString(lst,0,lst.length));
 			if (fvf.getEncodeName().equals(enc_array_list[i])) {
                 item.isChecked = true;
                 lv_encode.setSelection(i);

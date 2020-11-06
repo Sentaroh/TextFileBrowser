@@ -224,8 +224,6 @@ public class MainActivity extends AppCompatActivity {
         mViewedFileListSpinner=(Spinner)findViewById(R.id.text_browser_activity_file_view_selector);
         setSpinnerBackground(mActivity, mViewedFileListSpinner, ThemeUtil.isLightThemeUsed(mActivity));
         mViewedFileListAdapter=new ViewedFileListAdapter(this, android.R.layout.simple_spinner_item, mGp.viewedFileList);
-//		mViewedFileListAdapter.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
-//        mViewedFileListAdapter.setDropDownViewResource(android.R.layout.simple_list_item_single_choice);
         mViewedFileListAdapter.setDropDownViewResource(R.layout.viewed_file_list_item);
         mViewedFileListSpinner.setPrompt(mContext.getString(R.string.msgs_text_browser_select_view_file));
         mViewedFileListSpinner.setAdapter(mViewedFileListAdapter);
@@ -306,9 +304,7 @@ public class MainActivity extends AppCompatActivity {
                         mGp.settingBufferHexIndexSize,
                         mGp.settingBufferPoolSize,
                         mActivity);
-//				mViewedFileListAdapter.notifyDataSetChanged();
-                if (i==mSavedViewedFileListSpinnerPosition)
-                    mGp.currentViewedFile=vfli.viewd_file;
+                if (i==mSavedViewedFileListSpinnerPosition) mGp.currentViewedFile=vfli.viewd_file;
             }
             initFileSelectionSpinner();
 
@@ -344,7 +340,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void positiveResponse(Context context, Object[] objects) {
                     if (!isFileAlreadyViewed(in_file)) {
-                        addFileToViewedFileList(true, in_file);
+                        addFileToViewedFileList(true, in.getType(), in_file);
                         showFileByViewedFileList(in_file);
                     } else {
                         showFileByViewedFileList(in_file);
@@ -412,11 +408,11 @@ public class MainActivity extends AppCompatActivity {
         log.debug("isTextMimeType result="+result+", MimeType="+mime_type);
 	    return result;
     }
-	private void addFileToViewedFileList(boolean set_selection, SafFile3 in_file) {
+	private void addFileToViewedFileList(boolean set_selection, String mime_type, SafFile3 in_file) {
 		log.debug("addFileToViewedFileList, fp="+in_file.getPath());
 		ViewedFileListItem vfli=new ViewedFileListItem();
 
-		if (mGp.settingShowAllFileAsText || (isTextMimeTypex(in_file.getMimeType()))) vfli.browseMode=FileViewerAdapter.TEXT_BROWSER_BROWSE_MODE_CHAR;
+		if (mGp.settingShowAllFileAsText || (isTextMimeTypex(mime_type))) vfli.browseMode=FileViewerAdapter.TEXT_BROWSER_BROWSE_MODE_CHAR;
 		else vfli.browseMode=FileViewerAdapter.TEXT_BROWSER_BROWSE_MODE_HEX;
 
 		vfli.tc_view=new ThreadCtrl();
@@ -1141,7 +1137,7 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     if (!isFileAlreadyViewed(in_file)) {
-                        addFileToViewedFileList(true, in_file);
+                        addFileToViewedFileList(true, null, in_file);
                     } else {
                         showFileByViewedFileList(in_file);
                     }

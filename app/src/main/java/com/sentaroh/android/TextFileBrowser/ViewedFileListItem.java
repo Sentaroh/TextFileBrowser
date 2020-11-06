@@ -40,6 +40,7 @@ class ViewedFileListItem implements Externalizable {
     public IndexedFileReader ix_reader_view=null;
 
     public String encodeName="";
+    public String mime_type="";
 
     public boolean viewerParmsInitRequired=true;
     public boolean viewerParmsRestoreRequired=false;

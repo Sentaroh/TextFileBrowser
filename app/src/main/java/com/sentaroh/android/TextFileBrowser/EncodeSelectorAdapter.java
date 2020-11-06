@@ -39,21 +39,18 @@ import com.sentaroh.android.Utilities3.NotifyEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EncodeSelectorAdapter extends ArrayAdapter<EncodeListItem>{
+public class EncodeSelectorAdapter extends ArrayAdapter<EncodeSelectorAdapter.EncodeListItem>{
     private static Logger log = LoggerFactory.getLogger(EncodeSelectorAdapter.class);
 	private ArrayList<EncodeListItem> encode_list=null;
 	private int mLayoutId=0;
 	private Context mContext=null;
 	
-//	private ThemeColorList mThemeColorList;
-	
-	public EncodeSelectorAdapter(Context context, int id, 
+	public EncodeSelectorAdapter(Context context, int id,
 			ArrayList<EncodeListItem> objects) {
 		super(context, id, objects);
 		mLayoutId=id;
 		encode_list=objects;
 		mContext=context;
-//		mThemeColorList=ThemeUtil.getThemeColorList(mContext);
 	};
 
 	private NotifyEvent mNotifyClickListener=null;
@@ -64,7 +61,6 @@ public class EncodeSelectorAdapter extends ArrayAdapter<EncodeListItem>{
 	@Override
 	final public View getView(final int position, View convertView, final ViewGroup parent) {
 		final ViewHolder holder;
-//		Log.v("","count="+getCount()+", pos="+position);
 		final EncodeListItem item = getItem(position);
         View v = convertView;
         if (v == null) {
@@ -79,7 +75,6 @@ public class EncodeSelectorAdapter extends ArrayAdapter<EncodeListItem>{
         	holder= (ViewHolder)v.getTag();
         }
         if (item != null) {
-//        	Log.v("","name="+item.encode_name);
         	holder.rb_checked.setText(item.encode_name);
         	holder.rb_checked.setOnCheckedChangeListener(new OnCheckedChangeListener(){
 				@Override
@@ -104,4 +99,8 @@ public class EncodeSelectorAdapter extends ArrayAdapter<EncodeListItem>{
 		RadioButton rb_checked;
 	};
 
+    static class EncodeListItem {
+        public boolean isChecked=false;
+        public String encode_name=null;
+    }
 }
