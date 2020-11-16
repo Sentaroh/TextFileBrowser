@@ -2,7 +2,7 @@ package com.sentaroh.android.TextFileBrowser;
 
 /*
 The MIT License (MIT)
-Copyright (c) 2011-2019 Sentaroh
+Copyright (c) 2013 Sentaroh
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of 
 this software and associated documentation files (the "Software"), to deal 
@@ -127,10 +127,10 @@ public class CustomTextView extends View {
 //		setTextSize(getCvParmsInt(cparms,attrs, "cvTextSize",10));
 //		setText(getCvParmsString(cparms,attrs, "cvText",""));
 		
-		TypedArray a = getContext().obtainStyledAttributes(attrs, com.sentaroh.android.Utilities3.R.styleable.CustomTextView);
+		TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.CustomTextView);
 		float text_size= 
-	    		a.getDimension(com.sentaroh.android.Utilities3.R.styleable.CustomTextView_textSize, 15);
-		String text= a.getString(com.sentaroh.android.Utilities3.R.styleable.CustomTextView_text);
+	    		a.getDimension(R.styleable.CustomTextView_textSize, 15);
+		String text= a.getString(R.styleable.CustomTextView_text);
 	    a.recycle();
 		setTextSizePx(text_size);
 		if (text!=null) setText(text);
