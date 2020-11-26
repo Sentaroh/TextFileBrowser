@@ -4,6 +4,10 @@
 -This software includes the work that is distributed in the GNU Lesser General Public License v2.1.
 -This software includes the work that is distributed in the MIT License.
 
+# Download
+
+https://github.com/Sentaroh/TextFileBrowser/releases
+
 # How to Build
 
 - Clone from Github(https://github.com/Sentaroh/TextFileBrowser.git) using Android Studio 3.0 or higher(VCS-> Checkout from Version Control-> GitHub).
