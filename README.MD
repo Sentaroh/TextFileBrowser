@@ -1,9 +1,5 @@
 # TextFileBrowser
 
--This software includes the work that is distributed in the Apache License 2.0.
--This software includes the work that is distributed in the GNU Lesser General Public License v2.1.
--This software includes the work that is distributed in the MIT License.
-
 # Download
 
 https://github.com/Sentaroh/TextFileBrowser/releases
@@ -12,3 +8,8 @@ https://github.com/Sentaroh/TextFileBrowser/releases
 
 - Clone from Github(https://github.com/Sentaroh/TextFileBrowser.git) using Android Studio 3.0 or higher(VCS-> Checkout from Version Control-> GitHub).
 - Build by Android Studio.
+
+# License information
+
+- This software includes the work that is distributed in the MOZILLA PUBLIC LICENSE 1.1.  
+  - [juniversalchardet-1.0.3](https://code.google.com/archive/p/juniversalchardet/)   
