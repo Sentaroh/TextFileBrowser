@@ -49,7 +49,7 @@
         <string name="msgs_text_browser_cc_switch_hex">Switch to Hex view</string>
         <string name="msgs_text_browser_copy_end">Set end position of copying</string>
         <string name="msgs_text_browser_copy_from">Set start position of copying</string>
-        <string name="msgs_text_browser_copymsg_can_not_copied_gt_5mib">The number of characters to be copied exceeds 5 MiB. Please reduce the number of lines to be copied.</string>
+        <string name="msgs_text_browser_copymsg_can_not_copied_over_limit">The number of characters to be copied exceeds 512KiB. Please reduce the number of lines to be copied.</string>
         <string name="msgs_text_browser_copymsg_copied">%s line(s) copied to clipboard</string>
         <string name="msgs_text_browser_copymsg_specify_end">Copy has been initiated, please determine the end position.</string>
         <string name="msgs_text_browser_do_copy">Copy to clipboard</string>

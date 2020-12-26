@@ -1037,12 +1037,12 @@ public class FileViewerFragment extends Fragment {
 			 out.append(adapter.getItem(i)[0]);
 			 sep="\n";
 		 }
-		 if (out.length()<=(1024*1024*5)) {
+		 if (out.length()<=(1024*512)) {//Limit to 512KiB
 		     cm.setPrimaryClip(ClipData.newPlainText("TextFileBrowser", out.toString()));
              CommonDialog.showToastShort(mMainActivity, String.format(getString(R.string.msgs_text_browser_copymsg_copied),c_line));
          } else {
              MessageDialogFragment cdf =MessageDialogFragment.newInstance(false, "I", "Clipboard copy error",
-                             mContext.getString(R.string.msgs_text_browser_copymsg_can_not_copied_gt_5mib));
+                             mContext.getString(R.string.msgs_text_browser_copymsg_can_not_copied_over_limit));
              cdf.showDialog(getFragmentManager(),cdf,null);
          }
 	}

@@ -49,7 +49,7 @@
         <string name="msgs_text_browser_cc_switch_hex">16進表示に切替</string>
         <string name="msgs_text_browser_copy_end">コピー終了行</string>
         <string name="msgs_text_browser_copy_from">コピー開始行</string>
-        <string name="msgs_text_browser_copymsg_can_not_copied_gt_5mib">コピーする文字数が5MiBを越えています。コピーする行数を少なくしてください。</string>
+        <string name="msgs_text_browser_copymsg_can_not_copied_over_limit">コピーする文字数が512KiBを越えています。コピーする行数を少なくしてください。</string>
         <string name="msgs_text_browser_copymsg_copied">%s行をクリップボードにコピーしました</string>
         <string name="msgs_text_browser_copymsg_specify_end">コピー範囲の指定中です、終了を指定してください</string>
         <string name="msgs_text_browser_do_copy">クリップボードにコピー</string>
