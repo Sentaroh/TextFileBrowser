@@ -118,7 +118,7 @@ public class ViewedFileListAdapter extends ArrayAdapter<ViewedFileListItem>{
         return convertView;
     }
 
-    public static void setMultilineEllipsizeOld(TextView view, int maxLines, TextUtils.TruncateAt where) {
+    public static void setMultilineEllipsizeOld(NonWordwrapCheckedTextView view, int maxLines, TextUtils.TruncateAt where) {
         if (maxLines >= view.getLineCount()) {
             // ellipsizeする必要無し
             return;
@@ -127,7 +127,7 @@ public class ViewedFileListAdapter extends ArrayAdapter<ViewedFileListItem>{
         for (int i = 0; i < maxLines; i++) {
             avail += view.getLayout().getLineMax(i);
         }
-        CharSequence ellipsizedText = TextUtils.ellipsize(view.getText(), view.getPaint(), avail, where);
+        CharSequence ellipsizedText = TextUtils.ellipsize(view.getOriginalText(), view.getPaint(), avail, where);
         view.setText(ellipsizedText);
     }
 
