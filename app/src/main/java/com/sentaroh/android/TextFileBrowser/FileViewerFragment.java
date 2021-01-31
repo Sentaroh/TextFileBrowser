@@ -599,9 +599,12 @@ public class FileViewerFragment extends Fragment {
 	public void rebuildTextListAdapter(boolean reset_copy) {
         if (mGp.settingShowDivederLine) mTextListView.setDivider(mDefaultDviderLine);
         else mTextListView.setDivider(null);
-        String f_str=mTextListAdapter.getFindString();
-        int sel_pos=mTextListAdapter.getFindPostition();
-
+        String f_str="";
+        int sel_pos=0;
+        if (mTextListAdapter!=null) {
+            f_str=mTextListAdapter.getFindString();
+            sel_pos=mTextListAdapter.getFindPostition();
+        }
         if (reset_copy) {
 			int pos=0,posTop=0;
 			pos=mTextListView.getFirstVisiblePosition();
