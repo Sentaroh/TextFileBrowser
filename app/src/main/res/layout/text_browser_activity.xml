@@ -12,6 +12,14 @@
         android:background="@drawable/spinner_color_background"
         />
 
+    <TextView
+        android:id="@+id/blank"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/msgs_text_browser_file_not_readed"
+        android:textAppearance="?android:attr/textAppearanceLarge"/>
+
     <FrameLayout
         android:id="@+id/container"
         android:layout_width="match_parent"

@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <resources>
     <!-- About -->
-        <string name="msgs_tb_menu_about">TextFileBrowserについて</string>
-        <string name="msgs_text_browser_about_tb">Version %s\n\nTextファイルを文字列または16進で表示するアプリケーションです。\n-文字列表示（無改行、画面右端で強制改行、画面右端でワードで改行）\n-16進表示\n-Textファイル以外でもTextファイルとして表示可能\n-ファイルサイズの上限は1GBです。\n\nExternal Library: juniversalchardet 1.0.3</string>
-        <string name="msgs_dlg_title_privacy_policy">プライバシーポリシー</string>
-        <string name="msgs_dlg_privacy_policy_html">TextFileBrowser_Privacy_JA.html</string>
-        <string name="msgs_tb_menu_privacy_policy">プライバシーポリシー</string>
+        <string name="msgs_about_dlg_func_btn">機能</string>
+        <string name="msgs_about_dlg_privacy_btn">プライバシー ポリシー</string>
+        <string name="msgs_about_dlg_change_btn">更新履歴</string>
+        <string name="msgs_dlg_title_about">TextFileBrowserについて</string>
+        <string name="msgs_dlg_title_about_func_desc">TextFileBrowser_about_JA_Desc.md</string>
+        <string name="msgs_dlg_title_about_privacy_desc">TextFileBrowser_about_JA_Privacy.md</string>
+        <string name="msgs_dlg_title_about_change_desc">TextFileBrowser_about_JA_Change.md</string>
     <!-- Storage -->
         <string name="msgs_storage_permission_title">ストレージの許可</string>
         <string name="msgs_main_permission_external_storage_denied_msg">外部ストレージにアクセスする許可が与えられていないためファイルの読み込みができません。</string>
@@ -34,8 +36,17 @@
         <string name="msgs_tb_menu_send_log">ログの送信</string>
         <string name="msgs_tb_menu_settings">設定</string>
         <string name="msgs_tb_menu_storage_permission">ストレージアクセス許可</string>
+    <!-- Log management -->
+        <string name="msgs_log_management_enable_log_file_warning">有効にすることにより下記のデータがログファイルに記録されます。\nAndroidバージョン、端末名、ディレクトリー名、ファイル名、SMBアカウント名、IPアドレス、ネットワークインターフェース名、システム設定、アプリ情報</string>
+        <string name="msgs_log_management_send_log_file_warning">ログを開発者にE-Mailを使用して送信します。ログファイルにはAndroidバージョン、端末名、ディレクトリー名、ファイル名、ファイル内容、アプリ情報が含まれます。\n１．内容表示ボタンを押しtemp_log.txtを表示し、内容を確認してください（テキストファイルを表示するためのアプリケーション選択の画面が表示されたら、アプリケーションを表示してください）\n
+2. 送信する内容を確認したら、送信ボタンを押して質問または問題を記述してください。\n
+3. ZIPファイルをパスワード保護する場合はパスワードと確認パスワード入力する。\n
+4. 「送信」ボタンを押してE-Mail選択ダイアログでE-Mailを選択\n
+5. E-Mailを送信してください。\n
+6. ZIPファイルをパスワード保護した場合は、「ZIPファイルのパスワードを送信」ボタンをタップしてE-Mailで送信してください。</string>
     <!-- Main -->
         <string name="msgs_tb_application_restarted">アプリケーションが再起動されました。</string>
+        <string name="msgs_tb_application_can_not_be_used_file_selector">ファイル選択は使用できなくなりました、ファイルマネージャーからアプリを起動して下さい。</string>
         <string name="msgs_text_browser_cc_hide_line_divider">行区切り線を隠す</string>
         <string name="msgs_text_browser_cc_hide_line_no">行番号を隠す</string>
         <string name="msgs_text_browser_cc_line_break_no_word">無条件で改行</string>
@@ -61,6 +72,7 @@
         <string name="msgs_text_browser_file_reading_cancelled">ファイル読込がキャンセルされました</string>
         <string name="msgs_text_browser_file_reading_file">ファイルを読込中です</string>
         <string name="msgs_text_browser_file_select_error_msg">指定されたファイルが見つかりません。ファイルパス=%s</string>
+        <string name="msgs_text_browser_file_not_readed">ファイルが読み込まれていません。ファイルマネージャーから読み込ませてください。</string>
         <string name="msgs_text_browser_file_select_error_title">ファイルの読込</string>
         <string name="msgs_text_browser_file_select_file">読込むファイルの選択</string>
         <string name="msgs_text_browser_ir_file_empty">ファイルが空です</string>

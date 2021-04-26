@@ -27,6 +27,7 @@
         android:id="@+id/privacy_polycy_dlg_close"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:text="@string/msgs_common_dialog_close"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 </LinearLayout>

@@ -442,9 +442,7 @@ public class SettingsActivity extends PreferenceActivity{
 
         private void checkSettings(Logger log, SharedPreferences shared_pref, String key_string) {
             Preference pref_key=mPrefFrag.findPreference(key_string);
-            if (key_string.equals(mContext.getString(R.string.settings_tb_debug_enable))) {
-                log.debug("checkSettings entered, key="+key_string+", value="+shared_pref.getBoolean(key_string, false));
-            } else if (key_string.equals(mContext.getString(R.string.settings_tb_exit_cleanly))) {
+            if (key_string.equals(mContext.getString(R.string.settings_tb_exit_cleanly))) {
                 log.debug("checkSettings entered, key="+key_string+", value="+shared_pref.getBoolean(key_string, false));
             } else if (key_string.equals(mContext.getString(R.string.settings_tb_confirm_exit))) {
                 log.debug("checkSettings entered, key="+key_string+", value="+shared_pref.getBoolean(key_string, false));

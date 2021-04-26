@@ -28,8 +28,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.preference.PreferenceManager;
 
+import androidx.core.util.LogWriter;
+
+import com.sentaroh.android.TextFileBrowser.Log.LogUtil;
 import com.sentaroh.android.Utilities3.SafFile3;
 import com.sentaroh.android.Utilities3.SafManager3;
 import com.sentaroh.android.Utilities3.StringUtil;
@@ -38,11 +42,15 @@ import com.sentaroh.android.Utilities3.ThemeUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.LoggerWriter;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 import static com.sentaroh.android.TextFileBrowser.Constants.*;
@@ -52,10 +60,10 @@ public class GlobalParameters {
 
     private static Logger log = LoggerFactory.getLogger(GlobalParameters.class);
 
-    public LogWriter logWriter = null;
-
     public ArrayList<ViewedFileListItem> viewedFileList = new ArrayList<ViewedFileListItem>();
     public SafFile3 currentViewedFile = null;
+
+    public boolean disableFileSelector=false;
 
     public NotificationCommonParms commonNotification = new NotificationCommonParms();
 
@@ -121,9 +129,10 @@ public class GlobalParameters {
     }
 
     public void init(Activity a) {
+        if (Build.VERSION.SDK_INT>=30) disableFileSelector=true;
         initSettingParms(a.getApplicationContext());
         loadSettingParms(a.getApplicationContext());
-        logInit(a.getApplicationContext());
+        initLogger(a.getApplicationContext());
         initThemeColorList(a);
         safMgr=new SafManager3(a.getApplicationContext());
     }
@@ -232,79 +241,22 @@ public class GlobalParameters {
         return result;
     };
 
-    public void createCrashReport(String info) {
-        if (logWriter==null) return;
-        String cr_path=logGetLogDirectory()+"/crash_report.txt";
-        File cr_file=new File(cr_path);
-        FileWriter fw= null;
-        try {
-            fw = new FileWriter(cr_file);
-            BufferedWriter bw=new BufferedWriter(fw, 1024*1024*1);
-            bw.write(StringUtil.convDateTimeTo_YearMonthDayHourMinSecMili(System.currentTimeMillis()));
-            bw.newLine();
-            bw.write(info);
-            bw.flush();
-            bw.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+    private void initLogger(Context c) {
+        final LogUtil log_util = new LogUtil(c, "SLF4J");
+
+        Slf4jLogWriter log_writer=new Slf4jLogWriter(log_util);
+        log.setWriter(log_writer);
+    }
+
+    class Slf4jLogWriter extends LoggerWriter {
+        private LogUtil mLu =null;
+        public Slf4jLogWriter(LogUtil lu) {
+            mLu =lu;
         }
-    }
-
-    public void logInit(Context c) {
-//        Log.v(APPLICATION_TAG, "Log init, debug="+debugEnabled);
-        if (debugEnabled) {
-            logWriter = new LogWriter();
-            logWriter.logInit(c);
-            boolean debug=true;
-            boolean info=true;
-            boolean trace=true;
-            boolean error=true;
-            boolean warning=true;
-            log.setLogOption(debug, error, info, trace, warning);
-            log.setWriter(logWriter);
-        } else {
-            boolean debug=false;
-            boolean info=true;
-            boolean trace=false;
-            boolean error=true;
-            boolean warning=true;
-            log.setLogOption(debug, error, info, trace, warning);
+        @Override
+        public void write(String msg) {
+            mLu.addDebugMsg(1,"I", msg);
         }
-    }
-
-    public String logGetLogDirectory() {
-        if (logWriter!=null)return logWriter.logGetLogDirectory();
-        else return "";
-    }
-
-    public void logFlush() {
-        if (logWriter!=null)logWriter.logFlush();
-    }
-
-    public void logClose() {
-        if (logWriter!=null)logWriter.logClose();
-    }
-
-    public void logOpen() {
-        if (logWriter!=null)logWriter.logOpen();
-    }
-
-    public void logRotate() {
-        if (logWriter!=null)logWriter.logRotate();
-    }
-
-    public void logRemoveFile() {
-        if (logWriter!=null)logWriter.logRemoveFile();
-    }
-
-    public boolean isLogFileExists() {
-        if (logWriter!=null) return logWriter.isLogFileExists();
-        return false;
-    }
-
-    public boolean isLogRemovableFileExists() {
-        if (logWriter!=null) return logWriter.isLogRemovableFileExists();
-        return false;
     }
 
 }

@@ -935,6 +935,7 @@ public class FileViewerFragment extends Fragment {
                                 "Mime type="+mMainUriFile.getMimeType()+"\n"+
                                 "Encoding="+mIdxReader.getCurrentEncodeName()+"\n"
                         );
+                cdf.setWordWrapEanbled(false);
                 cdf.showDialog(getFragmentManager(),cdf,null);
 
             }

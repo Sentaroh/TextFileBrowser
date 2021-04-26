@@ -37,6 +37,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.storage.StorageManager;
+import android.util.Base64;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -47,6 +48,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.MimeTypeMap;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -60,8 +62,12 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
 
+import com.google.android.material.tabs.TabLayout;
+import com.sentaroh.android.TextFileBrowser.Log.LogManagementFragment;
+import com.sentaroh.android.TextFileBrowser.Log.LogUtil;
 import com.sentaroh.android.Utilities3.AppUncaughtExceptionHandler;
 import com.sentaroh.android.Utilities3.BuildConfig;
+import com.sentaroh.android.Utilities3.CallBackListener;
 import com.sentaroh.android.Utilities3.Dialog.CommonDialog;
 import com.sentaroh.android.Utilities3.Dialog.CommonFileSelector2;
 import com.sentaroh.android.Utilities3.Dialog.MessageDialogFragment;
@@ -76,10 +82,12 @@ import com.sentaroh.android.Utilities3.SafStorage3;
 import com.sentaroh.android.Utilities3.SystemInfo;
 import com.sentaroh.android.Utilities3.ThemeUtil;
 import com.sentaroh.android.Utilities3.ThreadCtrl;
+import com.sentaroh.android.Utilities3.Widget.CustomTabLayout;
+import com.sentaroh.android.Utilities3.Widget.CustomViewPager;
+import com.sentaroh.android.Utilities3.Widget.CustomViewPagerAdapter;
 import com.sentaroh.android.Utilities3.Zip.ZipUtil;
 
 import static com.sentaroh.android.TextFileBrowser.Constants.*;
-import static com.sentaroh.android.TextFileBrowser.LogWriter.LOG_FILE_NAME_ARCHIVE_PREFIX;
 import static com.sentaroh.android.Utilities3.Dialog.CommonFileSelector2.DIALOG_SELECT_CATEGORY_FILE;
 
 import java.io.ByteArrayInputStream;
@@ -94,6 +102,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
+import org.markdownj.MarkdownProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,17 +126,19 @@ public class MainActivity extends AppCompatActivity {
 	private Context mContext;
 	private MainActivity mActivity;
 
+    private CommonUtilities mUtil = null;
+
 	@Override  
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		log.debug("onSaveInstanceState entered");
+        mUtil.addDebugMsg(1, "I", "onSaveInstanceState entered");
         saveViewContents(outState);
 	};
 
 	@Override
 	protected void onRestoreInstanceState(Bundle savedState) {  
 		super.onRestoreInstanceState(savedState);
-		log.debug("onRestoreInstanceState entered");
+        mUtil.addDebugMsg(1, "I", "onRestoreInstanceState entered");
 		mRestartStatus=2;
         restoreViewContents(savedState);
 	};
@@ -181,7 +192,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
-		log.debug("onNewIntent entered, restartStatus="+mRestartStatus);
+        mUtil.addDebugMsg(1, "I", "onNewIntent entered, restartStatus="+mRestartStatus);
 		if (mRestartStatus==2) return;
 		if (mFileSelectorDialogFragment!=null && mRestartStatus==1) return;
 		if (intent!=null && intent.getData()!=null) {
@@ -207,7 +218,8 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         setContentView(R.layout.text_browser_activity);
 
-        log.debug("onCreate entered, SDK="+ Build.VERSION.SDK_INT+", Appl="+getApplVersionName());
+        mUtil=new CommonUtilities(mActivity, "Main", mGp, getSupportFragmentManager());
+        mUtil.addDebugMsg(1, "I", "onCreate entered, SDK="+ Build.VERSION.SDK_INT+", Appl="+getApplVersionName());
 
         MyUncaughtExceptionHandler myUncaughtExceptionHandler = new MyUncaughtExceptionHandler();
         myUncaughtExceptionHandler.init(mContext, myUncaughtExceptionHandler);
@@ -242,42 +254,31 @@ public class MainActivity extends AppCompatActivity {
         public void appUniqueProcess(Throwable ex, String strace) {
             log.error("UncaughtException detected, error="+ex);
             log.error(strace);
-            mGp.logFlush();
-            mGp.createCrashReport("UncaughtException detected\n"+strace);
+            mUtil.flushLog();
         }
     };
 
     @Override
 	public void onStart() {
 		super.onStart();
-		log.debug("onStart entered");
+        mUtil.addDebugMsg(1, "I", "onStart entered");
 	};
 
 	@Override
 	public void onRestart() {
 		super.onStart();
-		log.debug("onRestart entered");
+        mUtil.addDebugMsg(1, "I", "onRestart entered");
         mGp.commonNotification.notificationManager.cancelAll();
 	};
 
 	@Override
 	public void onResume() {
 		super.onResume();
-		log.debug("onResume entered, restartStatus="+mRestartStatus);
+        mUtil.addDebugMsg(1, "I", "onResume entered, restartStatus="+mRestartStatus);
 		if (mRestartStatus==0) {
 	    	Intent in=getIntent();
             if (in==null || in.getData()==null) {
 		    	NotificationUtil.initNotification(mContext, mGp.commonNotification);
-		    	NotifyEvent ntfy=new NotifyEvent(mContext);
-		    	ntfy.setListener(new NotifyEventListener() {
-                    @Override
-                    public void positiveResponse(Context context, Object[] objects) {
-                        showFileSelectDialog();
-                    }
-                    @Override
-                    public void negativeResponse(Context context, Object[] objects) {}
-                });
-                if (checkLegacyStoragePermissions(ntfy)) ntfy.notifyToListener(true, null);
 			} else {
                 NotificationUtil.initNotification(mContext, mGp.commonNotification);
                 prepareShowFile(in);
@@ -331,25 +332,16 @@ public class MainActivity extends AppCompatActivity {
 
 	private void prepareShowFile(Intent in) {
         int flag=in.getFlags();
-        log.debug("received flag="+String.format("0x%8x", flag)+", intent="+in.getData().toString());
+        mUtil.addDebugMsg(1, "I", "received flag="+String.format("0x%8x", flag)+", intent="+in.getData().toString());
         try {
             final SafFile3 in_file=new SafFile3(mContext, in.getData());
             InputStream is=in_file.getInputStreamByUri();
-            NotifyEvent ntfy=new NotifyEvent(mContext);
-            ntfy.setListener(new NotifyEventListener() {
-                @Override
-                public void positiveResponse(Context context, Object[] objects) {
-                    if (!isFileAlreadyViewed(in_file)) {
-                        addFileToViewedFileList(true, in.getType(), in_file);
-                        showFileByViewedFileList(in_file);
-                    } else {
-                        showFileByViewedFileList(in_file);
-                    }
-                }
-                @Override
-                public void negativeResponse(Context context, Object[] objects) {}
-            });
-            if (checkLegacyStoragePermissions(ntfy)) ntfy.notifyToListener(true, null);
+            if (!isFileAlreadyViewed(in_file)) {
+                addFileToViewedFileList(true, in.getType(), in_file);
+                showFileByViewedFileList(in_file);
+            } else {
+                showFileByViewedFileList(in_file);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             NotifyEvent ntfy=new NotifyEvent(mContext);
@@ -374,14 +366,14 @@ public class MainActivity extends AppCompatActivity {
 				break;
 			}
 		}
-		log.debug("isFileAlreadyViewed, Uri="+in_file.getPath()+", result="+result);
+        mUtil.addDebugMsg(1, "I", "isFileAlreadyViewed, Uri="+in_file.getPath()+", result="+result);
 		return result;
 	};
 
 	private int getViewedFileListCount() {
 		int result=0;
 		if (mGp.viewedFileList!=null) result= mGp.viewedFileList.size();
-		log.debug("getViewedFileListCount, result="+result);
+        mUtil.addDebugMsg(1, "I", "getViewedFileListCount, result="+result);
 		return result;
 	};
 
@@ -405,11 +397,11 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-        log.debug("isTextMimeType result="+result+", MimeType="+mime_type);
+        mUtil.addDebugMsg(1, "I", "isTextMimeType result="+result+", MimeType="+mime_type);
 	    return result;
     }
 	private void addFileToViewedFileList(boolean set_selection, String mime_type, SafFile3 in_file) {
-		log.debug("addFileToViewedFileList, fp="+in_file.getPath());
+        mUtil.addDebugMsg(1, "I", "addFileToViewedFileList, fp="+in_file.getPath());
 		ViewedFileListItem vfli=new ViewedFileListItem();
 
 		if (mGp.settingShowAllFileAsText || (isTextMimeTypex(mime_type))) vfli.browseMode=FileViewerAdapter.TEXT_BROWSER_BROWSE_MODE_CHAR;
@@ -466,7 +458,7 @@ public class MainActivity extends AppCompatActivity {
 				}
 			}
 		}
-		log.debug("removeFileFromViewedFileList, fp="+fp+", result="+rem_pos);
+		mUtil.addDebugMsg(1, "I", "removeFileFromViewedFileList, fp="+fp+", result="+rem_pos);
 	};
 
 	private ViewedFileListItem getViewedFileListItem(SafFile3 in_file) {
@@ -481,8 +473,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-		if (in_file!=null) log.debug("getViewedFileListItem, fp="+in_file.getPath()+", result="+pos);
-		else log.debug("getViewedFileListItem, fp=null");
+		if (in_file!=null) mUtil.addDebugMsg(1, "I", "getViewedFileListItem, fp="+in_file.getPath()+", result="+pos);
+		else mUtil.addDebugMsg(1, "I", "getViewedFileListItem, fp=null");
 //		Thread.dumpStack();
 		return vfli;
 	};
@@ -508,40 +500,44 @@ public class MainActivity extends AppCompatActivity {
 				mGp.currentViewedFile= mGp.viewedFileList.get(i).viewd_file;
 				pos=i;
 				mViewedFileListSpinner.setSelection(i, false);
+
+				TextView tv_blank=(TextView)mActivity.findViewById(R.id.blank);
+				tv_blank.setVisibility(TextView.GONE);
+
 				break;
 			}
 		}
-		log.debug("showFileByViewedFileList, fp="+in_file.getPath()+", result="+pos);
+		mUtil.addDebugMsg(1, "I", "showFileByViewedFileList, fp="+in_file.getPath()+", result="+pos);
 	};
 
 	@Override
 	public void onPause() {
 		super.onPause();
-		log.debug("onPause entered");
-		mGp.logFlush();
+        mUtil.addDebugMsg(1, "I", "onPause entered");
+        mUtil.flushLog();
         // Application process is follow
 	};
 
 	@Override
 	public void onStop() {
 		super.onStop();
-		log.debug("onStop entered");
+        mUtil.addDebugMsg(1, "I", "onStop entered");
         // Application process is follow
         if (mGp.currentViewedFile!=null)
             NotificationUtil.showOngoingNotificationMsg(mContext, mGp.commonNotification, mGp.currentViewedFile.getPath());
-        mGp.logFlush();
+        mUtil.flushLog();
 	};
 
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		log.debug("onDestroy entered");
+        mUtil.addDebugMsg(1, "I", "onDestroy entered");
         // Application process is follow
 		if (mTerminateApplication) {
 	    	NotificationUtil.clearNotification(mContext, mGp.commonNotification);
 //			deleteTaskData();
-            mGp.logClose();
             cleanupCacheFile();
+            mUtil.flushLog();
 			if (mGp.settingExitCleanly) {
 				Handler hndl=new Handler();
 				hndl.postDelayed(new Runnable(){
@@ -582,8 +578,12 @@ public class MainActivity extends AppCompatActivity {
                 }
 			} else {
                 final ViewedFileListItem vfli=getViewedFileListItem(mGp.currentViewedFile);
-                if (vfli.searchEnabled && vfli.file_view_fragment!=null) {
-                    vfli.file_view_fragment.switchFindWidget();
+                if (vfli!=null) {
+                    if (vfli.searchEnabled && vfli.file_view_fragment!=null) {
+                        vfli.file_view_fragment.switchFindWidget();
+                    } else {
+                        confirmExit();
+                    }
                 } else {
                     confirmExit();
                 }
@@ -635,7 +635,7 @@ public class MainActivity extends AppCompatActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
-		log.debug("onCreateOptionsMenu Entered");
+		mUtil.addDebugMsg(1, "I", "onCreateOptionsMenu Entered");
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.menu_tb_setting, menu);
 		return true;
@@ -643,14 +643,10 @@ public class MainActivity extends AppCompatActivity {
 	
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		log.debug("onPrepareOptionsMenu Entered");
+		mUtil.addDebugMsg(1, "I", "onPrepareOptionsMenu Entered");
         super.onPrepareOptionsMenu(menu);
 		ViewedFileListItem vf=getViewedFileListItem(mGp.currentViewedFile);
-        CommonDialog.setMenuItemEnabled(mActivity, menu, menu.findItem(R.id.menu_tb_open), true);
         CommonDialog.setMenuItemEnabled(mActivity, menu, menu.findItem(R.id.menu_tb_clear_cache), true);
-
-        if (SafManager3.buildStoragePermissionRequiredList(mContext).size()>0) menu.findItem(R.id.menu_tb_storage_permission).setVisible(true);
-        else menu.findItem(R.id.menu_tb_storage_permission).setVisible(false);
 
         if (vf!=null) {
 	        if (vf.browseMode==FileViewerAdapter.TEXT_BROWSER_BROWSE_MODE_CHAR) {
@@ -660,7 +656,6 @@ public class MainActivity extends AppCompatActivity {
 				menu.findItem(R.id.menu_tb_settings).setVisible(true);
 				menu.findItem(R.id.menu_tb_mode_swicth).setVisible(true);
 				menu.findItem(R.id.menu_tb_reload).setVisible(true);
-				menu.findItem(R.id.menu_tb_open).setVisible(true);
 				menu.findItem(R.id.menu_tb_find).setVisible(true);
 				menu.findItem(R.id.menu_tb_about).setVisible(true);
 	        } else {
@@ -670,7 +665,6 @@ public class MainActivity extends AppCompatActivity {
 				menu.findItem(R.id.menu_tb_settings).setVisible(true);
 				menu.findItem(R.id.menu_tb_mode_swicth).setVisible(true);
 				menu.findItem(R.id.menu_tb_reload).setVisible(true);
-				menu.findItem(R.id.menu_tb_open).setVisible(true);
 				menu.findItem(R.id.menu_tb_find).setVisible(false);
 				menu.findItem(R.id.menu_tb_about).setVisible(true);
 	        }
@@ -678,16 +672,12 @@ public class MainActivity extends AppCompatActivity {
 				CommonDialog.setMenuItemEnabled(mActivity, menu, menu.findItem(R.id.menu_tb_settings), false);
 				CommonDialog.setMenuItemEnabled(mActivity, menu, menu.findItem(R.id.menu_tb_mode_swicth), false);
 				CommonDialog.setMenuItemEnabled(mActivity, menu, menu.findItem(R.id.menu_tb_reload), false);
-				CommonDialog.setMenuItemEnabled(mActivity, menu, menu.findItem(R.id.menu_tb_open), false);
-//				CommonDialog.setMenuItemEnabled(mActivity, menu, menu.findItem(R.id.menu_tb_open).setEnabled(false);
 				CommonDialog.setMenuItemEnabled(mActivity, menu, menu.findItem(R.id.menu_tb_find), false);
 				CommonDialog.setMenuItemEnabled(mActivity, menu, menu.findItem(R.id.menu_tb_about), false);
 			} else {
 				CommonDialog.setMenuItemEnabled(mActivity, menu, menu.findItem(R.id.menu_tb_settings), true);
 				CommonDialog.setMenuItemEnabled(mActivity, menu, menu.findItem(R.id.menu_tb_mode_swicth), true);
 				CommonDialog.setMenuItemEnabled(mActivity, menu, menu.findItem(R.id.menu_tb_reload), true);
-				menu.findItem(R.id.menu_tb_open).setVisible(true);
-//				menu.findItem(R.id.menu_tb_open).setEnabled(true);
 				CommonDialog.setMenuItemEnabled(mActivity, menu, menu.findItem(R.id.menu_tb_find), true);
 				CommonDialog.setMenuItemEnabled(mActivity, menu, menu.findItem(R.id.menu_tb_about), true);
 			}
@@ -700,48 +690,49 @@ public class MainActivity extends AppCompatActivity {
             menu.findItem(R.id.menu_tb_find).setVisible(false);
         }
 
-		if (mGp.isLogFileExists()) CommonDialog.setMenuItemEnabled(mActivity, menu, menu.findItem(R.id.menu_tb_send_log), true);
-		else CommonDialog.setMenuItemEnabled(mActivity, menu, menu.findItem(R.id.menu_tb_send_log), false);
-
-        if (mGp.isLogRemovableFileExists()) CommonDialog.setMenuItemEnabled(mActivity, menu, menu.findItem(R.id.menu_tb_remove_log_file), true);
-        else CommonDialog.setMenuItemEnabled(mActivity, menu, menu.findItem(R.id.menu_tb_remove_log_file), false);
-
         return true;
 	};
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		log.debug("onOptionsItemSelected Entered");
+		mUtil.addDebugMsg(1, "I", "onOptionsItemSelected Entered");
 		ViewedFileListItem vf=getViewedFileListItem(mGp.currentViewedFile);
-		FileViewerFragment fvf=(FileViewerFragment)vf.file_view_fragment;
-		if (item.getItemId()== R.id.menu_tb_settings) {
-			invokeSettings();
-			refreshOptionMenu();
-		} else if (item.getItemId()== R.id.menu_tb_open) {
-            showFileSelectDialog();
-		} else if (item.getItemId()== R.id.menu_tb_reload) {
-			fvf.reloadFile();
-		} else if (item.getItemId()== R.id.menu_tb_mode_swicth) {
-			fvf.switchDisplayMode();
-			refreshOptionMenu();
-		} else if (item.getItemId()== R.id.menu_tb_find) {
-			fvf.switchFindWidget();
-			refreshOptionMenu();
-        } else if (item.getItemId()== R.id.menu_tb_storage_permission) {
-            requestStoragePermissions(REQUEST_CODE_EXTERNAL_STORAGE_ACCESS_PERMISSION);
-		} else if (item.getItemId()== R.id.menu_tb_about) {
-			aboutTextFileBrowser();
-        } else if (item.getItemId()== R.id.menu_tb_privacy_policy) {
-            showPrivacyPolicy();
-		} else if (item.getItemId()== R.id.menu_tb_exit) {
-			confirmExit();
-        } else if (item.getItemId()== R.id.menu_tb_send_log) {
-            sendLogFile();
-        } else if (item.getItemId()== R.id.menu_tb_clear_cache) {
-            clearCache();
-        } else if (item.getItemId()== R.id.menu_tb_remove_log_file) {
-            removeLogFile();
-		}
+		if (vf!=null) {
+            FileViewerFragment fvf=(FileViewerFragment)vf.file_view_fragment;
+            if (item.getItemId()== R.id.menu_tb_settings) {
+                invokeSettings();
+                refreshOptionMenu();
+            } else if (item.getItemId()== R.id.menu_tb_reload) {
+                fvf.reloadFile();
+            } else if (item.getItemId()== R.id.menu_tb_mode_swicth) {
+                fvf.switchDisplayMode();
+                refreshOptionMenu();
+            } else if (item.getItemId()== R.id.menu_tb_find) {
+                fvf.switchFindWidget();
+                refreshOptionMenu();
+            } else if (item.getItemId()== R.id.menu_tb_about) {
+                aboutTextFileBrowser();
+            } else if (item.getItemId()== R.id.menu_tb_exit) {
+                confirmExit();
+            } else if (item.getItemId()== R.id.menu_tb_clear_cache) {
+                clearCache();
+            } else if (item.getItemId()== R.id.menu_tb_log_management) {
+                invokeLogManagement();
+            }
+        } else {
+            if (item.getItemId()== R.id.menu_tb_settings) {
+                invokeSettings();
+                refreshOptionMenu();
+            } else if (item.getItemId()== R.id.menu_tb_log_management) {
+                invokeLogManagement();
+            } else if (item.getItemId()== R.id.menu_tb_about) {
+                aboutTextFileBrowser();
+            } else if (item.getItemId()== R.id.menu_tb_exit) {
+                confirmExit();
+            } else if (item.getItemId()== R.id.menu_tb_clear_cache) {
+                clearCache();
+            }
+        }
 		return false;
 	};
 
@@ -750,21 +741,10 @@ public class MainActivity extends AppCompatActivity {
 	    mCommonDlg.showCommonDialog(false, "W", "File index cache file was removed, restart the app.", "",null);
     }
 
-    private void removeLogFile() {
-	    NotifyEvent ntfy=new NotifyEvent(mContext);
-	    ntfy.setListener(new NotifyEventListener() {
-            @Override
-            public void positiveResponse(Context context, Object[] objects) {
-                mGp.logRotate();
-                mGp.logRemoveFile();
-            }
-
-            @Override
-            public void negativeResponse(Context context, Object[] objects) {
-
-            }
-        });
-        mCommonDlg.showCommonDialog(true, "W", "Do you wants to delete existing log file.", "", ntfy);
+    private void invokeLogManagement() {
+        LogUtil.flushLog(mContext);
+        LogManagementFragment lfm = LogManagementFragment.newInstance(mContext, false, getString(R.string.msgs_log_file_list_title));
+        lfm.showDialog(mActivity, getSupportFragmentManager(), lfm, null);
     }
 
     public boolean isApplicationTerminating() {return mTerminateApplication;}
@@ -797,86 +777,112 @@ public class MainActivity extends AppCompatActivity {
         }
 	};
 
-    private final static String MAIL_TO="gm.developer.fhoshino@gmail.com";
-    private void sendLogFile() {
-        final String zip_file_name=getExternalCacheDir().getPath()+"/log.zip";
-        mGp.logRotate();
+    private void aboutTextFileBrowser() {
+        final Dialog dialog = new Dialog(mActivity, mGp.screenTheme);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.about_dialog);
 
-        File log_dir=new File(mGp.logGetLogDirectory());
-        File[] log_fl=log_dir.listFiles();
-        ArrayList<String>log_list=new ArrayList<String>();
-        File cr_file=new File(log_dir+"/crash_report.txt");
-        if (cr_file.exists()) log_list.add(cr_file.getPath());
-        for(File item:log_fl) {
-            if (item.getName().startsWith(LOG_FILE_NAME_ARCHIVE_PREFIX))
-                log_list.add(item.getPath());
-        }
-        if (log_list.size()==0) {
-            MessageDialogFragment mdf =MessageDialogFragment.newInstance(false, "W",
-                    "No log files founds.",
-                    "");
-            mdf.showDialog(getSupportFragmentManager(), mdf, null);
-            return;
-        }
+        final LinearLayout title_view = (LinearLayout) dialog.findViewById(R.id.about_dialog_title_view);
+        final TextView title = (TextView) dialog.findViewById(R.id.about_dialog_title);
+        title_view.setBackgroundColor(mGp.themeColorList.title_background_color);
+        title.setTextColor(mGp.themeColorList.title_text_color);
+        title.setText(getString(R.string.msgs_dlg_title_about) + " (Ver" + SystemInfo.getApplVersionName(mContext) + ")");
 
-        final String[] file_name=log_list.toArray(new String[log_list.size()]);
-        final ThreadCtrl tc=new ThreadCtrl();
-        NotifyEvent ntfy=new NotifyEvent(mContext);
-        ntfy.setListener(new NotifyEventListener(){
+        final CustomTabLayout tab_layout = (CustomTabLayout) dialog.findViewById(R.id.tab_layout);
+        tab_layout.addTab(mContext.getString(R.string.msgs_about_dlg_func_btn));
+        tab_layout.addTab(mContext.getString(R.string.msgs_about_dlg_privacy_btn));
+        tab_layout.addTab(mContext.getString(R.string.msgs_about_dlg_change_btn));
+
+        tab_layout.adjustTabWidth();
+
+        LayoutInflater vi = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        int zf=100;
+
+        LinearLayout ll_func = (LinearLayout) vi.inflate(R.layout.about_dialog_func, null);
+        final WebView func_view = (WebView) ll_func.findViewById(R.id.about_dialog_function_view);
+        func_view.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
+        func_view.setScrollbarFadingEnabled(false);
+        setWebViewListener(func_view, zf);
+
+        LinearLayout ll_privacy = (LinearLayout) vi.inflate(R.layout.about_dialog_privacy, null);
+        final WebView privacy_view = (WebView) ll_privacy.findViewById(R.id.about_dialog_privacy_view);
+        privacy_view.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
+        privacy_view.setScrollbarFadingEnabled(false);
+        setWebViewListener(privacy_view, zf);
+
+        LinearLayout ll_change = (LinearLayout) vi.inflate(R.layout.about_dialog_change, null);
+        final WebView change_view = (WebView) ll_change.findViewById(R.id.about_dialog_change_view);
+        change_view.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
+        change_view.setScrollbarFadingEnabled(false);
+        setWebViewListener(change_view, zf);
+
+        loadHelpFile(func_view, getString(R.string.msgs_dlg_title_about_func_desc));
+        loadHelpFile(privacy_view, getString(R.string.msgs_dlg_title_about_privacy_desc));
+        loadHelpFile(change_view, getString(R.string.msgs_dlg_title_about_change_desc));
+
+        final CustomViewPagerAdapter adapter = new CustomViewPagerAdapter(mActivity,
+                new WebView[]{func_view, privacy_view, change_view});
+        final CustomViewPager viewPager = (CustomViewPager) dialog.findViewById(R.id.about_view_pager);
+        viewPager.setAdapter(adapter);
+        viewPager.setOffscreenPageLimit(3);
+        viewPager.setSwipeEnabled(false);
+        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener(){
             @Override
-            public void positiveResponse(Context c, Object[] o) {
+            public void onPageSelected(int position) {
+//                mUtil.addDebugMsg(2,"I","onPageSelected entered, pos="+position);
+                tab_layout.getTabAt(position).select();
             }
+
             @Override
-            public void negativeResponse(Context c, Object[] o) {
-                tc.setDisabled();
+            public void onPageScrollStateChanged(int state) {
+//                mUtil.addDebugMsg(2,"I","onPageScrollStateChanged entered, state="+state);
+            }
+
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+//		    	util.addDebugMsg(2,"I","onPageScrolled entered, pos="+position);
             }
         });
 
-        final ProgressBarDialogFragment pbdf=ProgressBarDialogFragment.newInstance(
-                mContext.getString(R.string.msgs_log_file_list_dlg_send_zip_file_creating),
-                "",
-                mContext.getString(R.string.msgs_common_dialog_cancel),
-                mContext.getString(R.string.msgs_common_dialog_cancel));
-        final FragmentManager fm=getSupportFragmentManager();
-        pbdf.showDialog(fm, pbdf, ntfy,true);
-        final Handler hndl=new Handler();
-        Thread th=new Thread() {
+        tab_layout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener(){
             @Override
-            public void run() {
-                File lf=new File(zip_file_name);
-                lf.delete();
-//                String[] file_name=new String[]{mGp.logFile.getPath()};
-                String[] lmp= LocalMountPoint.convertFilePathToMountpointFormat(mContext, file_name[0]);
-                ZipUtil.createZipFile(mContext, tc,pbdf,zip_file_name,lmp[0],file_name);
-                if (tc.isEnabled()) {
-                    Intent intent=new Intent();
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.setAction(Intent.ACTION_SEND);
-//				    intent.setType("message/rfc822");
-//				    intent.setType("text/plain");
-                    intent.setType("application/zip");
-                    intent.putExtra(Intent.EXTRA_EMAIL, new String[]{MAIL_TO});
-                    intent.putExtra(Intent.EXTRA_SUBJECT, "TextFileBrowser log file");
-                    Uri uri= FileProvider.getUriForFile(mContext, APPLICATION_ID + ".provider",lf);
-                    intent.putExtra(Intent.EXTRA_STREAM, uri);///Uri.fromFile(lf));
-                    mActivity.startActivity(intent);
-                } else {
-                    lf.delete();
-                    MessageDialogFragment mdf =MessageDialogFragment.newInstance(false, "W",
-                            mContext.getString(R.string.msgs_log_file_list_dlg_send_zip_file_cancelled), "");
-                    mdf.showDialog(fm, mdf, null);
-                }
-                pbdf.dismiss();
-            };
-        };
-        th.start();
-    };
+            public void onTabSelected(TabLayout.Tab tab) {
+//                mUtil.addDebugMsg(2,"I","onTabSelected entered, state="+tab);
+                viewPager.setCurrentItem(tab.getPosition());
+            }
 
-    private void aboutTextFileBrowser() {
-		mCommonDlg.showCommonDialog(false, "I", 
-				getString(R.string.msgs_tb_menu_about), String.format(
-				getString(R.string.msgs_text_browser_about_tb),getApplVersionName()), 
-				null);
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+//                mUtil.addDebugMsg(2,"I","onTabUnselected entered, state="+tab);
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+//                mUtil.addDebugMsg(2,"I","onTabReselected entered, state="+tab);
+            }
+
+        });
+
+        final Button btnOk = (Button) dialog.findViewById(R.id.about_dialog_btn_ok);
+
+        CommonDialog.setDlgBoxSizeLimit(dialog, true);
+
+        // OKボタンの指定
+        btnOk.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        // Cancelリスナーの指定
+        dialog.setOnCancelListener(new Dialog.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface arg0) {
+                btnOk.performClick();
+            }
+        });
+
+        dialog.show();
 	};
 
 	public String getApplVersionName() {
@@ -890,142 +896,14 @@ public class MainActivity extends AppCompatActivity {
 	};
 
 	public void invokeSettings() {
-		log.debug("invokeSettings Entered");
+		mUtil.addDebugMsg(1, "I", "invokeSettings Entered");
 		Intent intent = new Intent(mContext,SettingsActivity.class);
 		startActivityForResult(intent,0);
 	}
 
-	private SafManager3.StorageVolumeInfo mPrimaryStorageVolume=null;
-	private void requestInternalStoragePermission() {
-        NotifyEvent ntfy_term=new NotifyEvent(mContext);
-        ntfy_term.setListener(new NotifyEventListener(){
-            @Override
-            public void positiveResponse(Context c, Object[] o) {
-                Intent intent=mPrimaryStorageVolume.volume.createOpenDocumentTreeIntent();
-                startActivityForResult(intent, REQUEST_CODE_PRIMARY_STORAGE_ACCESS_REQUEST);
-            }
-            @Override
-            public void negativeResponse(Context c, Object[] o) {
-                showInternalStoragePermissionDenyMessage();
-            }
-        });
-        mCommonDlg.showCommonDialog(true, "W",
-                mContext.getString(R.string.msgs_main_permission_internal_storage_title),
-                mContext.getString(R.string.msgs_main_permission_internal_storage_request_msg), ntfy_term);
-
-    }
-
-    private final int REQUEST_PERMISSIONS_WRITE_EXTERNAL_STORAGE=1;
-    @SuppressLint("NewApi")
-    private boolean checkLegacyStoragePermissions(final NotifyEvent p_ntfy) {
-        if (Build.VERSION.SDK_INT>=23 && Build.VERSION.SDK_INT<=30) {
-            log.debug("Prermission WriteExternalStorage="+checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)+
-                    ", WakeLock="+checkSelfPermission(Manifest.permission.WAKE_LOCK));
-            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                NotifyEvent ntfy=new NotifyEvent(mContext);
-                ntfy.setListener(new NotifyEventListener(){
-                    @Override
-                    public void positiveResponse(Context c, Object[] o) {
-                        mNotifyStorageAccessPermitted=p_ntfy;
-                        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSIONS_WRITE_EXTERNAL_STORAGE);
-                    }
-                    @Override
-                    public void negativeResponse(Context c, Object[] o) {
-                        showInternalStoragePermissionDenyMessage();
-                    }
-                });
-                mCommonDlg.showCommonDialog(false, "W",
-                        mContext.getString(R.string.msgs_main_permission_internal_storage_title),
-                        mContext.getString(R.string.msgs_main_permission_internal_storage_request_msg), ntfy);
-            } else {
-                return true;
-            }
-        } else {
-            return true;
-        }
-        return false;
-    };
-
-    private NotifyEvent mNotifyStorageAccessPermitted=null;
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (REQUEST_PERMISSIONS_WRITE_EXTERNAL_STORAGE == requestCode) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                if (mNotifyStorageAccessPermitted!=null) {
-                    final NotifyEvent ntfy=mNotifyStorageAccessPermitted;
-                    Handler hndl=new Handler();
-                    hndl.postDelayed(new Runnable(){
-                        @Override
-                        public void run() {
-                            ntfy.notifyToListener(true, null);
-                        }
-                    },100);
-                }
-                mNotifyStorageAccessPermitted=null;
-            } else {
-                showInternalStoragePermissionDenyMessage();
-            }
-        }
-    }
-
-    private final static int REQUEST_CODE_PRIMARY_STORAGE_ACCESS_REQUEST =40;
-    private final static int REQUEST_CODE_EXTERNAL_STORAGE_ACCESS_PERMISSION =41;
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		log.debug("Return from settings");
+		mUtil.addDebugMsg(1, "I", "Return from settings");
 		if (requestCode==0) applySettingParms();
-        else if (requestCode == REQUEST_CODE_PRIMARY_STORAGE_ACCESS_REQUEST || requestCode == REQUEST_CODE_EXTERNAL_STORAGE_ACCESS_PERMISSION) {
-            if (resultCode == Activity.RESULT_OK) {
-                log.debug("Storage picker action="+data.getAction()+", path="+data.getData().getPath());
-                if (mGp.safMgr.isRootTreeUri(data.getData())) {
-                    mGp.safMgr.addUuid(data.getData());
-                    mGp.safMgr.refreshSafList();
-                    if (requestCode == REQUEST_CODE_PRIMARY_STORAGE_ACCESS_REQUEST) showFileSelectDialog();
-                } else {
-                    NotifyEvent ntfy=new NotifyEvent(mContext);
-                    ntfy.setListener(new NotifyEvent.NotifyEventListener() {
-                        @Override
-                        public void positiveResponse(Context context, Object[] objects) {
-                            if (requestCode == REQUEST_CODE_PRIMARY_STORAGE_ACCESS_REQUEST) {
-                                requestInternalStoragePermission();
-                            } else {
-                                requestStoragePermissions(requestCode);
-                            }
-                        }
-                        @Override
-                        public void negativeResponse(Context context, Object[] objects) {
-                            showInternalStoragePermissionDenyMessage();
-                        }
-                    });
-                    if (requestCode == REQUEST_CODE_PRIMARY_STORAGE_ACCESS_REQUEST) {
-                        mCommonDlg.showCommonDialog(true, "W", mContext.getString(R.string.msgs_main_permission_internal_storage_reselect_msg),
-                                data.getData().getPath(), ntfy);
-                    } else {
-                        mCommonDlg.showCommonDialog(true, "W", mContext.getString(R.string.msgs_main_permission_external_storage_reselect_msg),
-                                data.getData().getPath(), ntfy);
-                    }
-                }
-            } else {
-                if (requestCode == REQUEST_CODE_PRIMARY_STORAGE_ACCESS_REQUEST) {
-                    showInternalStoragePermissionDenyMessage();
-                }
-            }
-        }
-    }
-
-    private void showInternalStoragePermissionDenyMessage() {
-        NotifyEvent ntfy_deny_internal=new NotifyEvent(mContext);
-        ntfy_deny_internal.setListener(new NotifyEventListener() {
-            @Override
-            public void positiveResponse(Context context, Object[] objects) {
-                finish();
-            }
-            @Override
-            public void negativeResponse(Context context, Object[] objects) {}
-        });
-        mCommonDlg.showCommonDialog(false, "W",
-                mContext.getString(R.string.msgs_main_permission_internal_storage_title),
-                mContext.getString(R.string.msgs_main_permission_internal_storage_denied_msg), ntfy_deny_internal);
     }
 
 	private void applySettingParms() {
@@ -1063,17 +941,6 @@ public class MainActivity extends AppCompatActivity {
 //			fvf.setFileViewerParameter(vf.viewd_file);
 			fvf.rebuildTextListAdapter(false);
 		}
-
-		if (debug_enabled!= mGp.debugEnabled) {
-		    if (mGp.debugEnabled) {
-		        mGp.logInit(mContext);
-            } else {
-		        if (debug_enabled) {
-                    mGp.logClose();
-                    mGp.logInit(mContext);
-                }
-            }
-        }
 
 		if (!prev_bgc.equals(mGp.settingTextAreaBackgroundColor)) {
 		    mGp.applyTextAreaBackGroundColor();
@@ -1128,7 +995,7 @@ public class MainActivity extends AppCompatActivity {
 
                     String mt= MimeTypeMap.getSingleton().getMimeTypeFromExtension(fid);
                     String mt_from_system=mt;
-                    log.debug("mime_type from system="+mt+", fid="+fid);
+                    mUtil.addDebugMsg(1, "I", "mime_type from system="+mt+", fid="+fid);
                     if (mt==null) {
                         if (fid!=null) {
                             if (fid.equals("log")) mt="text/plain";
@@ -1184,54 +1051,6 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private void requestInternalStoragePermissions(int req_code) {
-
-    }
-    private void requestStoragePermissions(int req_code) {
-        NotifyEvent ntfy_request=new NotifyEvent(mContext);
-        ntfy_request.setListener(new NotifyEventListener() {
-            @Override
-            public void positiveResponse(Context context, Object[] objects) {
-                ArrayList<String>uuid_list=(ArrayList<String>)objects[0];
-                Intent intent = null;
-                StorageManager sm = (StorageManager) mContext.getSystemService(Context.STORAGE_SERVICE);
-                ArrayList<SafManager3.StorageVolumeInfo>vol_list=SafManager3.getStorageVolumeInfo(mContext);
-                for(String uuid:uuid_list) {
-                    for(SafManager3.StorageVolumeInfo svi:vol_list) {
-                        if (svi.uuid.equals(uuid)) {
-                            if (Build.VERSION.SDK_INT>=24) {
-                                if (mGp.safMgr.isScopedStorageMode()) {
-                                    intent=svi.volume.createOpenDocumentTreeIntent();
-                                    startActivityForResult(intent, req_code);
-                                    break;
-                                } else {
-                                    if (!svi.uuid.equals(SafManager3.SAF_FILE_PRIMARY_UUID)) {
-                                        if (Build.VERSION.SDK_INT>=29) intent=svi.volume.createOpenDocumentTreeIntent();
-                                        else intent=svi.volume.createAccessIntent(null);
-                                        startActivityForResult(intent, req_code);
-                                        break;
-                                    }
-                                }
-                            } else {
-                                if (!svi.uuid.equals(SafManager3.SAF_FILE_PRIMARY_UUID)) {
-                                    intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-                                    startActivityForResult(intent, req_code);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void negativeResponse(Context context, Object[] objects) {
-            }
-        });
-        StoragePermission sp=new StoragePermission(mActivity, mGp.safMgr, mCommonDlg, ntfy_request);
-        sp.showDialog();
-    }
-
     private boolean mEnableFileSelection=false;
 	final public void setUiEnabled() {
 		mEnableFileSelection=true;
@@ -1254,9 +1073,9 @@ public class MainActivity extends AppCompatActivity {
 			        showFileByViewedFileList(mGp.currentViewedFile);
 //			    	NotificationUtil.showOngoingNotificationMsg(mContext, mGp.commonNotification, mGp.currentViewedFile.uri.getPath());
 
-					log.debug("ViewedFile was seleced, pos="+position+ ", prev="+prev+", new="+ mGp.currentViewedFile);
+					mUtil.addDebugMsg(1, "I", "ViewedFile was seleced, pos="+position+ ", prev="+prev+", new="+ mGp.currentViewedFile);
 				} else {
-					log.debug("ViewedFile selection ignored, pos="+position+ ", prev="+prev+", new="+ mGp.currentViewedFile);
+					mUtil.addDebugMsg(1, "I", "ViewedFile selection ignored, pos="+position+ ", prev="+prev+", new="+ mGp.currentViewedFile);
 				}
 			}
 			@Override
@@ -1313,16 +1132,12 @@ public class MainActivity extends AppCompatActivity {
         final TextView title = (TextView) dialog.findViewById(R.id.privacy_polycy_dlg_title);
         title_view.setBackgroundColor(mGp.themeColorList.title_background_color);
         title.setTextColor(mGp.themeColorList.title_text_color);
-        title.setText(getString(R.string.msgs_dlg_title_privacy_policy));
+        title.setText(getString(R.string.msgs_about_dlg_privacy_btn));
 
-        final WebView func_view = (WebView) dialog.findViewById(R.id.privacy_polycy_dlg_webview);
-        func_view.loadUrl("file:///android_asset/" + getString(R.string.msgs_dlg_privacy_policy_html));
-        func_view.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
-//        func_view.getSettings().setBuiltInZoomControls(true);
-//        func_view.getSettings().setDisplayZoomControls(true);
-//        func_view.getSettings().setSupportZoom(true);
-//        func_view.getSettings().setBuiltInZoomControls(true);
-//        func_view.getSettings().setTextZoom(zf);
+        final WebView privacy_view = (WebView) dialog.findViewById(R.id.privacy_polycy_dlg_webview);
+        privacy_view.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
+        loadHelpFile(privacy_view, getString(R.string.msgs_dlg_title_about_privacy_desc));
+        setWebViewListener(privacy_view, 100);
 
         final Button btnOk = (Button) dialog.findViewById(R.id.privacy_polycy_dlg_close);
 
@@ -1343,6 +1158,68 @@ public class MainActivity extends AppCompatActivity {
         });
 
         dialog.show();
+    }
+
+    public static String convertMakdownToHtml(Context c, String mark_down_fp) {
+//        long b_time=System.currentTimeMillis();
+        String html ="";
+        try {
+            InputStream is = c.getAssets().open(mark_down_fp);
+            MarkdownProcessor processor = new MarkdownProcessor();
+            html=processor.markdown(true, is);
+        } catch(Exception e) {
+            log.error("MarkDown conversion error.", e);
+            e.printStackTrace();
+        }
+//        Log.v(APPLICATION_TAG, "convertMakdownToHtml elapsed time="+(System.currentTimeMillis()-b_time));
+        return html;
+    }
+
+    private void loadHelpFile(final WebView web_view, String fn) {
+        final Handler hndl=new Handler();
+        Thread th1=new Thread(){
+            @Override
+            public void run() {
+                String html=convertMakdownToHtml(mContext, fn);
+                final String b64= Base64.encodeToString(html.getBytes(), Base64.DEFAULT);
+                hndl.post(new Runnable(){
+                    @Override
+                    public void run() {
+//                        web_view.loadData(html_func, "text/html; charset=UTF-8", null);
+                        web_view.loadData(b64, null, "base64");
+                    }
+                });
+            }
+        };
+        th1.start();
+    }
+
+    private void setWebViewListener(WebView wv, int zf) {
+        wv.getSettings().setTextZoom(zf);
+//        wv.getSettings().setBuiltInZoomControls(true);
+        wv.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading (WebView view, String url) {
+                return false;
+            }
+        });
+        wv.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event){
+                if(event.getAction() == KeyEvent.ACTION_DOWN){
+                    WebView webView = (WebView) v;
+                    switch(keyCode){
+                        case KeyEvent.KEYCODE_BACK:
+                            if(webView.canGoBack()){
+                                webView.goBack();
+                                return true;
+                            }
+                            break;
+                    }
+                }
+                return false;
+            }
+        });
     }
 
 }

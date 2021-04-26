@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <resources>
     <!-- About -->
-        <string name="msgs_tb_menu_about">About TextFileBrowser</string>
-        <string name="msgs_text_browser_about_tb">Version %s\n\nIt is an application that displays text files.\n-character string display(No line break, line break at the right edge of the screen, a new line at the right edge of the screen word)\n-Hex Decimal display\n-Display text as a text file other than the file\n-Maximum file size is 1GB.\n\nExternal Library: juniversalchardet 1.0.3</string>
-        <string name="msgs_dlg_title_privacy_policy">Privacy policy</string>
-        <string name="msgs_dlg_privacy_policy_html">TextFileBrowser_Privacy_EN.html</string>
-        <string name="msgs_tb_menu_privacy_policy">Privacy policy</string>
+        <string name="msgs_about_dlg_func_btn">Functions</string>
+        <string name="msgs_about_dlg_privacy_btn">Privacy Policy</string>
+        <string name="msgs_about_dlg_change_btn">Change Log</string>
+        <string name="msgs_dlg_title_about">About TextFileBrowser</string>
+        <string name="msgs_dlg_title_about_func_desc">TextFileBrowser_about_EN_Desc.md</string>
+        <string name="msgs_dlg_title_about_privacy_desc">TextFileBrowser_about_EN_Privacy.md</string>
+        <string name="msgs_dlg_title_about_change_desc">TextFileBrowser_about_EN_Change.md</string>
     <!-- Storage -->
         <string name="msgs_storage_permission_title">Permission to use storage</string>
         <string name="msgs_main_permission_external_storage_denied_msg">Since permission to access internal storage is not given, file reading and management data can not be read or written, the application is terminated.</string>
@@ -34,8 +36,17 @@
         <string name="msgs_tb_menu_send_log">Send log</string>
         <string name="msgs_tb_menu_settings">Settings</string>
         <string name="msgs_tb_menu_storage_permission">Storage access permission</string>
+    <!-- Log management -->
+        <string name="msgs_log_management_enable_log_file_warning">If you proceed, the following data will be recorded in the log file:\nAndroid version, Device name, Directory name, File name, SMB Account name, IP address, Network interface name, System settings, App information</string>
+        <string name="msgs_log_management_send_log_file_warning">Send log file by E-Mail to the developer. The log file contains Android version, Device name, Directory name, File name, File contents App information.\n1.Press the Preview button to check the conents of the temp_log.txt file that will be sent (if the selection screen of the application is displayed, then select the FAVORIT application to display the text file.)\n
+2.Once you have confirmed what you are submitting, press the \"Send\" button to describe your question or problem.\n
+3.If you want to password protect the ZIP file, enter the password and confirmation password.\n
+4.Press the Send button and select E-Mail in the E-Mail Selection dialog.\n
+5.Please send the e-mail.\n
+6.If you password-protected the ZIP file, tap the Send ZIP File Password button to send it by e-mail.</string>
     <!-- Main -->
         <string name="msgs_tb_application_restarted">Application was restarted.</string>
+        <string name="msgs_tb_application_can_not_be_used_file_selector">File selection is no longer available, please launch the app from the file manager.</string>
         <string name="msgs_text_browser_cc_hide_line_divider">Hide line divider</string>
         <string name="msgs_text_browser_cc_hide_line_no">Hide line number</string>
         <string name="msgs_text_browser_cc_line_break_no_word">Line breaks unconditionally</string>
@@ -61,6 +72,7 @@
         <string name="msgs_text_browser_file_reading_cancelled">Loading the file was cancelled</string>
         <string name="msgs_text_browser_file_reading_file">Loading the file</string>
         <string name="msgs_text_browser_file_select_error_msg">Specified file does not exist. Path=%s</string>
+        <string name="msgs_text_browser_file_not_readed">The file has not been loaded. Please load the file from the file manager.</string>
         <string name="msgs_text_browser_file_select_error_title">Open file</string>
         <string name="msgs_text_browser_file_select_file">Select file</string>
         <string name="msgs_text_browser_ir_file_empty">File was empty.</string>
