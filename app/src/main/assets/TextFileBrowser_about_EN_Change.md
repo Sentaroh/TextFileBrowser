@@ -1,3 +1,3 @@
-### 2021/05/xx Ver1.77
+### 2021/05/14 Ver1.77
 
 - Eliminated the file selection screen.
