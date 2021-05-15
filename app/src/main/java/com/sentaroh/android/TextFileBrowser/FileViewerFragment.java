@@ -757,43 +757,12 @@ public class FileViewerFragment extends Fragment {
 			}
 	  	});
         if (adapter.isCopyActive()) {//Copyエリアが選択されている
-//            int s_pos=adapter.getCopyBegin(), e_pos=adapter.getCopyEnd();
-//            if (adapter.getCopyBegin()>adapter.getCopyEnd()) {
-//                s_pos=adapter.getCopyBegin();
-//                e_pos=adapter.getCopyEnd();
-//            } else if (adapter.getCopyBegin()<adapter.getCopyEnd()) {
-//                s_pos=adapter.getCopyBegin();
-//                e_pos=adapter.getCopyEnd();
-//            } else if (adapter.getCopyBegin()==adapter.getCopyEnd()) {
-//                s_pos=adapter.getCopyBegin();
-//            }
-//            if (pos>=s_pos && pos<=e_pos) {
-//                setCotextMenuPerformCopy(mCcMenu, main_view_msg, lv, adapter, pos);
-//                setCotextMenuResetCopy(mCcMenu, main_view_msg, lv, adapter, pos);
-//                setCotextMenuSelectAll(mCcMenu, main_view_msg, lv, adapter, pos);
-//            } else {
-//                setCotextMenuSetCopyFrom(mCcMenu, main_view_msg, lv, adapter, pos);
-//                setCotextMenuSetCopyEnd(mCcMenu, main_view_msg, lv, adapter, pos);
-//                setCotextMenuResetCopy(mCcMenu, main_view_msg, lv, adapter, pos);
-//                setCotextMenuSelectAll(mCcMenu, main_view_msg, lv, adapter, pos);
-//            }
             setCotextMenuSetCopyFrom(mCcMenu, main_view_msg, lv, adapter, pos);
             setCotextMenuSetCopyEnd(mCcMenu, main_view_msg, lv, adapter, pos);
             setCotextMenuPerformCopy(mCcMenu, main_view_msg, lv, adapter, pos);
             setCotextMenuResetCopy(mCcMenu, main_view_msg, lv, adapter, pos);
             setCotextMenuSelectAll(mCcMenu, main_view_msg, lv, adapter, pos);
         } else if (adapter.getCopyBegin()!=-1) {//Copy開始が選択されている
-//            if (pos==adapter.getCopyBegin()) {
-//                setCotextMenuSetCopyEnd(mCcMenu, main_view_msg, lv, adapter, pos);
-//                setCotextMenuPerformCopy(mCcMenu, main_view_msg, lv, adapter, pos);
-//                setCotextMenuResetCopy(mCcMenu, main_view_msg, lv, adapter, pos);
-//                setCotextMenuSelectAll(mCcMenu, main_view_msg, lv, adapter, pos);
-//            } else {
-//                setCotextMenuSetCopyFrom(mCcMenu, main_view_msg, lv, adapter, pos);
-//                setCotextMenuSetCopyEnd(mCcMenu, main_view_msg, lv, adapter, pos);
-//                setCotextMenuResetCopy(mCcMenu, main_view_msg, lv, adapter, pos);
-//                setCotextMenuSelectAll(mCcMenu, main_view_msg, lv, adapter, pos);
-//            }
             setCotextMenuSetCopyFrom(mCcMenu, main_view_msg, lv, adapter, pos);
             setCotextMenuSetCopyEnd(mCcMenu, main_view_msg, lv, adapter, pos);
             setCotextMenuPerformCopy(mCcMenu, main_view_msg, lv, adapter, pos);
@@ -801,9 +770,7 @@ public class FileViewerFragment extends Fragment {
             setCotextMenuSelectAll(mCcMenu, main_view_msg, lv, adapter, pos);
         } else {//無選択
             setCotextMenuSetCopyFrom(mCcMenu, main_view_msg, lv, adapter, pos);
-//            setCotextMenuSetCopyEnd(mCcMenu, main_view_msg, lv, adapter, pos);
             setCotextMenuPerformCopy(mCcMenu, main_view_msg, lv, adapter, pos);
-//            setCotextMenuResetCopy(mCcMenu, main_view_msg, lv, adapter, pos);
             setCotextMenuSelectAll(mCcMenu, main_view_msg, lv, adapter, pos);
         }
 		if (mViewedFile.browseMode==FileViewerAdapter.TEXT_BROWSER_BROWSE_MODE_CHAR) {
