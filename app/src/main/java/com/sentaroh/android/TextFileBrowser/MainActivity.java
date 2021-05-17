@@ -229,7 +229,7 @@ public class MainActivity extends AppCompatActivity {
         if (mGp.viewedFileList==null) mGp.viewedFileList=new ArrayList<ViewedFileListItem>();
         initFileSelectionSpinner();
 
-        cleanupCacheFile();
+//        cleanupCacheFile();
     };
 
     private void initFileSelectionSpinner() {
@@ -320,13 +320,14 @@ public class MainActivity extends AppCompatActivity {
 
         setViewedFilleSelectorListener();
 
-    	Handler hndl=new Handler();
-		hndl.postDelayed(new Runnable(){
-			@Override
-			public void run() {
-		        mEnableFileSelection=true;
-			}
-		},500);
+        mEnableFileSelection=true;
+//    	Handler hndl=new Handler();
+//		hndl.postDelayed(new Runnable(){
+//			@Override
+//			public void run() {
+//		        mEnableFileSelection=true;
+//			}
+//		},500);
 
 	};
 
@@ -536,7 +537,7 @@ public class MainActivity extends AppCompatActivity {
 		if (mTerminateApplication) {
 	    	NotificationUtil.clearNotification(mContext, mGp.commonNotification);
 //			deleteTaskData();
-            cleanupCacheFile();
+//            cleanupCacheFile();
             mUtil.flushLog();
 			if (mGp.settingExitCleanly) {
 				Handler hndl=new Handler();
@@ -646,13 +647,17 @@ public class MainActivity extends AppCompatActivity {
 		mUtil.addDebugMsg(1, "I", "onPrepareOptionsMenu Entered");
         super.onPrepareOptionsMenu(menu);
 		ViewedFileListItem vf=getViewedFileListItem(mGp.currentViewedFile);
-        CommonDialog.setMenuItemEnabled(mActivity, menu, menu.findItem(R.id.menu_tb_clear_cache), true);
 
+        if (IndexedFileReader.indexCacheExists(mContext)) {
+            CommonDialog.setMenuItemEnabled(mActivity, menu, menu.findItem(R.id.menu_tb_clear_cache), true);
+        } else {
+            CommonDialog.setMenuItemEnabled(mActivity, menu, menu.findItem(R.id.menu_tb_clear_cache), false);
+        }
         if (vf!=null) {
 	        if (vf.browseMode==FileViewerAdapter.TEXT_BROWSER_BROWSE_MODE_CHAR) {
 	        	menu.findItem(R.id.menu_tb_mode_swicth)
-	        	.setTitle(getString(R.string.msgs_tb_menu_mode_switch_hex))
-	        	.setIcon(R.drawable.ic_32_hex);
+	        	    .setTitle(getString(R.string.msgs_tb_menu_mode_switch_hex))
+	        	    .setIcon(R.drawable.ic_32_hex);
 				menu.findItem(R.id.menu_tb_settings).setVisible(true);
 				menu.findItem(R.id.menu_tb_mode_swicth).setVisible(true);
 				menu.findItem(R.id.menu_tb_reload).setVisible(true);
@@ -660,8 +665,8 @@ public class MainActivity extends AppCompatActivity {
 				menu.findItem(R.id.menu_tb_about).setVisible(true);
 	        } else {
 	        	menu.findItem(R.id.menu_tb_mode_swicth)
-	        	.setTitle(getString(R.string.msgs_tb_menu_mode_switch_char))
-	        	.setIcon(R.drawable.ic_32_text);
+	        	    .setTitle(getString(R.string.msgs_tb_menu_mode_switch_char))
+	        	    .setIcon(R.drawable.ic_32_text);
 				menu.findItem(R.id.menu_tb_settings).setVisible(true);
 				menu.findItem(R.id.menu_tb_mode_swicth).setVisible(true);
 				menu.findItem(R.id.menu_tb_reload).setVisible(true);
@@ -1084,44 +1089,52 @@ public class MainActivity extends AppCompatActivity {
 
 	};
 
-    private void cleanupCacheFile() {
-        File[] fl=mContext.getExternalCacheDirs();
-        if (fl!=null && fl.length>0) {
-            for(File cf:fl) {
-                if (cf!=null) {
-                    File[] child_list=cf.listFiles();
-                    if (child_list!=null) {
-                        for(File ch_item:child_list) {
-                            if (ch_item!=null) {
-                                if (!deleteCacheFile(ch_item)) break;
-                            }
-                        }
-                    }
-                }
-            }
-        } else {
-            fl=mContext.getExternalCacheDirs();
-        }
-    }
-
-    private boolean deleteCacheFile(File del_item) {
-        boolean result=true;
-        if (del_item.isDirectory()) {
-            File[] child_list=del_item.listFiles();
-            for(File child_item:child_list) {
-                if (child_item!=null) {
-                    if (!deleteCacheFile(child_item)) {
-                        result=false;
-                        break;
-                    }
-                }
-            }
-            if (result) result=del_item.delete();
-        } else {
-            result=del_item.delete();
-        }
-        return result;
-    }
+//    private void cleanupCacheFile() {
+//        File[] fl=mContext.getCacheDir().listFiles();
+//        for(File del_item:fl) {
+//            deleteCacheFile(del_item);
+//        }
+////        File[] fl=mContext.getExternalCacheDirs();
+////        if (fl!=null && fl.length>0) {
+////            for(File cf:fl) {
+////                if (cf!=null) {
+////                    File[] child_list=cf.listFiles();
+////                    if (child_list!=null) {
+////                        for(File ch_item:child_list) {
+////                            if (ch_item!=null) {
+////                                if (!deleteCacheFile(ch_item)) break;
+////                            }
+////                        }
+////                    }
+////                }
+////            }
+////        } else {
+////            fl=mContext.getExternalCacheDirs();
+////        }
+//    }
+//
+//    private boolean deleteCacheFile(File del_item) {
+//        boolean result=true;
+//        mUtil.addDebugMsg(1, "I", "deleteCacheFile fp="+del_item.getPath());
+//        if (del_item.isDirectory()) {
+//            File[] child_list=del_item.listFiles();
+//            for(File child_item:child_list) {
+//                if (child_item!=null) {
+//                    if (!deleteCacheFile(child_item)) {
+//                        result=false;
+//                        break;
+//                    }
+//                }
+//            }
+//            if (result) {
+//                result=del_item.delete();
+//                mUtil.addDebugMsg(1, "I", "deleteCacheFile result="+result+", fp="+del_item.getPath());
+//            }
+//        } else {
+//            result=del_item.delete();
+//        }
+//        return result;
+//    }
 
     private void showPrivacyPolicy() {
         final Dialog dialog = new Dialog(mActivity, mGp.screenTheme);

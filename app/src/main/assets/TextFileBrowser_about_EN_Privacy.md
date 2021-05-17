@@ -1,27 +1,33 @@
-## 1. Collected data
-### Data provided by users to TextFileBrowser.
+## 1.Collected data  
+### 1.1.Data provided by users to TextFileBrowser.  
 
-There is no data provided by the user.
+- Password to protect data in "1.4. Sending or writing data outside TextFileBrowser".  
+The password will be discarded and not saved when the process is finished.  
 
-### Activity record of TextFileBrowser
+### 1.2.Activity record of TextFileBrowser  
 
-For verification of the execution result of TextFileBrowser and for technical support, the activity record data is saved in the memory area in the application.
-<span style="color: red;"><u>The data will not be sent to the outside unless the operation "1.3. </u></span>.
+Enabling logging will save the activity record data in the app's memory area for verification of the app's execution results and technical support. If logging is disabled, data recording will be stopped, but data already recorded will not be deleted.  
+<span style="color: red;"><u>Data will not be sent to the outside unless "1.3. Send data outside TextFileBrowser" operation is performed.</u></span>  
 
-- Version of TextFileBrowser, execution options of TextFileBrowser
-- Directory name, file name, file size, file content
-- Debugging information
-- Error information
+- Version of TextFileBrowser, execution options of TextFileBrowser  
+- Directory name, file name, file size, file content  
+- Debugging information  
+- Error information  
 
-### 1.3. Send data outside TextFileBrowser
+### 1.3.Send data outside TextFileBrowser  
 
-TextFileBrowser can not send data to outside unless the user does "Send Log" operation from the menu.
+Data held by TextFileBrowser cannot be sent or written out to outside unless operated by the user.  
 
-### Delete data saved in TextFileBrowser
+- Click the "Share" button from the log management.  
+- Click the "Send to Developer" button from the log management.  
+If you specify a password, the attached file will be password protected. The password will be discarded when you close the screen and will not be saved.  
+- Export to external storage by clicking "Export log file" button from Log Management.  
 
-By uninstalling TextFileBrowser, the saved data ("1.2. Activity record of TextFileBrowser") will be deleted from the device.
-<span style="color: red;"><u>However, the data saved in external storage by the user's operation will not be deleted. </u></span>
+### 1.4.Delete data saved in TextFileBrowser  
 
-## 2. Permissions required to run the app
+By uninstalling TextFileBrowser, the saved data ("1.2. Activity record of TextFileBrowser") will be deleted from the device.  
+<span style="color: red;"><u>However, the data saved in external storage by the user's operation will not be deleted. </u></span>  
 
-No additional permissions are required.
+## 2.Permissions required to run the app  
+
+No additional permissions are required.  

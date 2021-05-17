@@ -650,9 +650,18 @@ public class IndexedFileReader {
         }
     };
 
-    final public void houseKeepIndexCacheFolder(String option) {
+    static final public boolean indexCacheExists(Context c) {
+        String dir=getCacheDirectory(c);
+        File lf=new File(dir);
+        File[] fl=lf.listFiles();
+        if (fl==null) return false;
+        else if (fl.length>0) return true;
+        else return false;
+    };
+
+    final public void houseKeepIndexCacheFolder(Context c, String option) {
 		cparms.defaultSettingIndexCache=option;
-		String dir=LocalMountPoint.getExternalStorageDir()+"/TextFileBrowser/cache/";
+		String dir=getCacheDirectory(c);//LocalMountPoint.getExternalStorageDir()+"/TextFileBrowser/cache/";
 		File lf=new File(dir);
 		File[] fl=lf.listFiles();
 		if (fl!=null && fl.length!=0) {
@@ -666,13 +675,13 @@ public class IndexedFileReader {
 				for (File fl_item : fl) {
 					size+=fl_item.length();
 				}
-				if (size>(10*1024*1024)) removeOldIndexCache(cparms,fl, (long)(10*1024*1024));
+				if (size>(10*1024*1024)) removeOldIndexCache(cparms, fl, (long)(10*1024*1024));
 			} else if (option.equals(Constants.INDEX_CACHE_UP_TO_50MB)) {
 				long size=0;
 				for (File fl_item : fl) {
 					size+=fl_item.length();
 				}
-				if (size>(50*1024*1024)) removeOldIndexCache(cparms,fl, (long)(50*1024*1024));			}
+				if (size>(50*1024*1024)) removeOldIndexCache(cparms, fl, (long)(50*1024*1024));			}
 		}
 	};
 
@@ -698,7 +707,7 @@ public class IndexedFileReader {
 	};
 
 	static private String getCacheDirectory(Context c) {
-        String dir=c.getExternalFilesDir(null).getPath()+"/index_cache/";
+        String dir=c.getFilesDir().getPath()+"/index_cache/";
         return dir;
     }
 

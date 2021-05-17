@@ -582,7 +582,7 @@ public class FileViewerFragment extends Fragment {
             InputStream is=in_file.getInputStreamByUri();
             if (is.available()<(1024*1024*1024*2)-1024) {
                 ProgressBar pb=(ProgressBar)mMainView.findViewById(R.id.activity_browser_main_progress_bar);
-                mIdxReader.houseKeepIndexCacheFolder(mGp.settingIndexCache);
+                mIdxReader.houseKeepIndexCacheFolder(mContext, mGp.settingIndexCache);
                 mIdxReader.startFileIndexCreation(in_file, mTcIndexReader,p_ntfy, pb,
                         mMainViewMsgArea, mViewedFile.encodeName, mUiHandler);
             } else {
